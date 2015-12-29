@@ -6,4 +6,4 @@ build
 .DS_Store
 local.properties
 
-application-dev.yaml
+application-dev.yml
