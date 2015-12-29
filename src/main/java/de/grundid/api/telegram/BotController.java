@@ -42,7 +42,7 @@ public class BotController {
             Calendar now = Calendar.getInstance();
             int month = now.get(Calendar.MONTH) + 1;
             FeatureCollection featureCollection = restOperations.getForObject(
-                    "https://api.grundid.de/recycling?month=" + month, FeatureCollection.class);
+                    "http://api.grundid.de/recycling?month=" + month, FeatureCollection.class);
             List<Feature> features = new ArrayList<>(featureCollection.getFeatures());
             Collections
                     .sort(features, new ByDistanceComparator(location.getLatitude(), location.getLongitude()));

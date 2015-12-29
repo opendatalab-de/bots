@@ -9,6 +9,8 @@ import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SetWebhook;
 
+import javax.annotation.PostConstruct;
+
 @Service
 public class BotService {
 
@@ -17,6 +19,7 @@ public class BotService {
     @Value("${telegram.recyclingBot.apiKey}")
     private String apiKey;
 
+    @PostConstruct
     public void setWebhook() {
         log.info("Init Telegram Bot Webhook");
         SetWebhook setWebhook = new SetWebhook();
