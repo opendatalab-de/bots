@@ -2,3 +2,4 @@ server:
    port: 9020
    address: 127.0.0.1
 
+datastoreDir: /opt/bots.grundid.de/data
