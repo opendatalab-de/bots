@@ -1,4 +1,4 @@
-package de.grundid.api.telegram;
+package de.grundid.api.telegram.recycling;
 
 import de.grundid.api.utils.ByDistanceComparator;
 import de.grundid.api.utils.Utils;
@@ -76,7 +76,7 @@ public class BotController {
         return ResponseEntity.ok(sendMessage);
     }
 
-    private void logInfos(@RequestBody Update update) {
+    private void logInfos(Update update) {
         log.info("bot text: " + update.getMessage().getText());
         log.info("bot location: " + update.getMessage().getLocation());
         if (update.getMessage().getLocation() != null) {
