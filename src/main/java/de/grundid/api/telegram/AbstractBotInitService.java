@@ -3,6 +3,7 @@ package de.grundid.api.telegram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SetWebhook;
@@ -23,8 +24,8 @@ public class AbstractBotInitService {
 
     @PostConstruct
     public void setWebhook() {
-        if (apiKey != null) {
-            log.info("Init Telegram Bot Webhook");
+        if (StringUtils.hasText(apiKey)) {
+            log.info("Init Telegram Bot Webhook {}", botUrl);
             SetWebhook setWebhook = new SetWebhook();
             setWebhook.setUrl(botUrl);
             ResponseEntity<String> responseEntity = restTemplate
