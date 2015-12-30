@@ -63,7 +63,7 @@ public class DrinkerUpdateService {
             Location location = drinkWithLocation.getLocation();
             sb.append(drink.getName()).append(" ").append(priceFormat.format((double)drink.getPrice() / 100));
             if (drink.getVolume() != null) {
-                sb.append(" ").append(volumeFormat.format((double)drink.getVolume() / 100));
+                sb.append(" ").append(volumeFormat.format((double)drink.getVolume() / 1000));
             }
             sb.append("\n");
             if (StringUtils.hasText(drink.getBrand())) {
