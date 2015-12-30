@@ -1,7 +1,6 @@
 package de.grundid.api.telegram.drinker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,43 +13,48 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 @Service
 public class DrinkerDatabaseService {
 
     private static Logger log = LoggerFactory.getLogger(DrinkerDatabaseService.class);
-    private Set<Integer> registeredChatIds = new ConcurrentSkipListSet<>();
+    private Database database = new Database();
     @Value("${datastoreDir}")
     private String datastoreDir;
 
     public void addChatId(Integer charId) {
-        registeredChatIds.add(charId);
+        database.getRegisteredChatIds().add(charId);
         saveData();
     }
 
     public void removeChatId(Integer chatId) {
-        registeredChatIds.remove(chatId);
+        database.getRegisteredChatIds().remove(chatId);
+        saveData();
+    }
+
+    public long getLastCheck() {
+        return database.getLastCheck();
+    }
+
+    public void setLastCheck(long lastCheck) {
+        database.setLastCheck(lastCheck);
         saveData();
     }
 
     public Collection<Integer> getChatIds() {
-        return registeredChatIds;
+        return database.getRegisteredChatIds();
     }
 
     @PostConstruct
     public void loadData() {
-        File dataFile = new File(datastoreDir + File.separator + "drinker-chatids.json");
+        File dataFile = new File(datastoreDir + File.separator + "drinker-database.json");
         if (dataFile.exists()) {
             try {
                 FileInputStream inputStream = new FileInputStream(dataFile);
-                Set<Integer> knownIds = new ObjectMapper().readValue(inputStream,
-                        CollectionType.construct(HashSet.class, SimpleType.construct(Integer.class)));
-                registeredChatIds.addAll(knownIds);
+                database = new ObjectMapper().readValue(inputStream,
+                        SimpleType.construct(Database.class));
                 inputStream.close();
-                log.info("Saved chatIds loaded");
+                log.info("Saved database loaded");
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -60,12 +64,12 @@ public class DrinkerDatabaseService {
 
     private void saveData() {
         try {
-            File dataFile = new File(datastoreDir + File.separator + "drinker-chatids.json");
+            File dataFile = new File(datastoreDir + File.separator + "drinker-database.json");
             FileOutputStream out = new FileOutputStream(dataFile);
-            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(out, registeredChatIds);
+            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(out, database);
             out.flush();
             out.close();
-            log.info("ChatIds saved");
+            log.info("Database saved");
         }
         catch (IOException e) {
             e.printStackTrace();
