@@ -46,7 +46,7 @@ public class DrinkerUpdateService {
                 ResponseEntity<String> responseEntity = restTemplate
                         .postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage, String.class);
                 if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                    log.info("Set Hook ok: " + responseEntity.getBody());
+                    log.info("Send Message OK: " + responseEntity.getBody());
                 }
                 else {
                     log.error("Error setting hook: " + responseEntity.getBody());
@@ -57,13 +57,13 @@ public class DrinkerUpdateService {
     }
 
     public String createMessage(List<DrinkWithLocation> drinkWithLocations) {
-        StringBuilder sb = new StringBuilder("Neue Drinks seit der letzten Nachricht: ");
+        StringBuilder sb = new StringBuilder("Neue Drinks seit der letzten Nachricht:\n");
         for (DrinkWithLocation drinkWithLocation : drinkWithLocations) {
             Drink drink = drinkWithLocation.getDrink();
             Location location = drinkWithLocation.getLocation();
             sb.append(drink.getName()).append(" ").append(priceFormat.format((double)drink.getPrice() / 100));
             if (drink.getVolume() != null) {
-                sb.append(" ").append(volumeFormat.format(drink.getVolume()));
+                sb.append(" ").append(volumeFormat.format((double)drink.getVolume() / 100));
             }
             sb.append("\n");
             if (StringUtils.hasText(drink.getBrand())) {
