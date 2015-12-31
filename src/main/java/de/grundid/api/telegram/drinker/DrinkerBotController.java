@@ -36,7 +36,7 @@ public class DrinkerBotController {
                 sendMessage.setText(
                         "Alles klar. Keine Nachrichten mehr.");
             }
-            else if (userMessage.startsWith("/adminChat")) {
+            else if (userMessage.startsWith("/adminchat")) {
                 if (BOT_OWNER.equals(username)) {
                     drinkerDatabaseService.addAdminChatId(message.getChatId());
                     sendMessage.setText(
@@ -46,6 +46,10 @@ public class DrinkerBotController {
                     sendMessage.setText(
                             "Sorry, aber du bist nicht mein Meister.");
                 }
+            }
+            else {
+                sendMessage.setText(
+                        "Sorry, aber der Befehl ist mir unbekannt.");
             }
         }
         else {
