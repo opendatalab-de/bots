@@ -17,7 +17,7 @@ import org.telegram.api.objects.Update;
 public class DrinkerBotController {
 
     private static Logger log = LoggerFactory.getLogger(DrinkerBotController.class);
-    private static final String BOT_OWNER = "@nitegate";
+    private static final String BOT_OWNER = "nitegate";
     @Autowired
     private DrinkerDatabaseService drinkerDatabaseService;
 

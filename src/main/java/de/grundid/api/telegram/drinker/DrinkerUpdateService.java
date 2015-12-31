@@ -63,12 +63,13 @@ public class DrinkerUpdateService {
         for (DrinkWithLocation drinkWithLocation : drinkWithLocations) {
             Drink drink = drinkWithLocation.getDrink();
             Location location = drinkWithLocation.getLocation();
-            sb.append("[http://grundid.de/drinkerApp/").append(location.getPlaceId()).append("](");
-            sb.append(drink.getName()).append(" ").append(priceFormat.format((double)drink.getPrice() / 100));
+            sb.append("[").append(drink.getName()).append(" ").append(
+                    priceFormat.format((double)drink.getPrice() / 100));
             if (drink.getVolume() != null) {
                 sb.append(" ").append(volumeFormat.format((double)drink.getVolume() / 1000));
             }
-            sb.append(")\n");
+            sb.append("]");
+            sb.append("(http://grundid.de/drinkerApp/").append(location.getPlaceId()).append(")\n");
             sb.append(drink.getCategory()).append("\n");
             if (StringUtils.hasText(drink.getBrand())) {
                 sb.append(drink.getBrand()).append("\n");
