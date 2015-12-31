@@ -1,5 +1,7 @@
 package de.grundid.api.telegram.drinker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -14,6 +16,7 @@ import org.telegram.api.objects.Update;
 @RestController
 public class DrinkerBotController {
 
+    private static Logger log = LoggerFactory.getLogger(DrinkerBotController.class);
     private static final String BOT_OWNER = "@nitegate";
     @Autowired
     private DrinkerDatabaseService drinkerDatabaseService;
@@ -37,6 +40,7 @@ public class DrinkerBotController {
                         "Alles klar. Keine Nachrichten mehr.");
             }
             else if (userMessage.startsWith("/adminchat")) {
+                log.info("admin chat request from {}", username);
                 if (BOT_OWNER.equals(username)) {
                     drinkerDatabaseService.addAdminChatId(message.getChatId());
                     sendMessage.setText(
