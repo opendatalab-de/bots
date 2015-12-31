@@ -22,13 +22,19 @@ public class DrinkerDatabaseService {
     @Value("${datastoreDir}")
     private String datastoreDir;
 
-    public void addChatId(Integer charId) {
-        database.getRegisteredChatIds().add(charId);
+    public void addChatId(Integer chatId) {
+        database.getRegisteredChatIds().add(chatId);
         saveData();
     }
 
     public void removeChatId(Integer chatId) {
         database.getRegisteredChatIds().remove(chatId);
+        database.getAdminChatIds().remove(chatId);
+        saveData();
+    }
+
+    public void addAdminChatId(Integer chatId) {
+        database.getAdminChatIds().add(chatId);
         saveData();
     }
 
@@ -39,6 +45,10 @@ public class DrinkerDatabaseService {
     public void setLastCheck(long lastCheck) {
         database.setLastCheck(lastCheck);
         saveData();
+    }
+
+    public boolean isAdminChat(Integer chatId) {
+        return database.getAdminChatIds().contains(chatId);
     }
 
     public Collection<Integer> getChatIds() {

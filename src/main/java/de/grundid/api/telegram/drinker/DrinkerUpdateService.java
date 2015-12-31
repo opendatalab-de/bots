@@ -37,11 +37,13 @@ public class DrinkerUpdateService {
                 .getForObject("http://api.grundid.de/drinksmenu/drinks?since={since}&size=50", PagedResponse.class,
                         lastCheck);
         if (pagedResponse != null && pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
-            String messageContent = createMessage(pagedResponse.getContent());
-            log.info("Message with drinks: {}", messageContent);
             for (Integer chatId : drinkerDatabaseService.getChatIds()) {
                 SendMessage sendMessage = new SendMessage();
+                sendMessage.enableMarkdown(true);
                 sendMessage.setChatId(chatId);
+                String messageContent = createMessage(pagedResponse.getContent(),
+                        drinkerDatabaseService.isAdminChat(chatId));
+                log.info("Message with drinks: {}", messageContent);
                 sendMessage.setText(messageContent);
                 ResponseEntity<String> responseEntity = restTemplate
                         .postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage, String.class);
@@ -56,16 +58,18 @@ public class DrinkerUpdateService {
         }
     }
 
-    public String createMessage(List<DrinkWithLocation> drinkWithLocations) {
+    public String createMessage(List<DrinkWithLocation> drinkWithLocations, boolean adminChat) {
         StringBuilder sb = new StringBuilder("Neue Drinks seit der letzten Nachricht:\n");
         for (DrinkWithLocation drinkWithLocation : drinkWithLocations) {
             Drink drink = drinkWithLocation.getDrink();
             Location location = drinkWithLocation.getLocation();
+            sb.append("[http://grundid.de/drinkerApp/").append(location.getPlaceId()).append("](");
             sb.append(drink.getName()).append(" ").append(priceFormat.format((double)drink.getPrice() / 100));
             if (drink.getVolume() != null) {
                 sb.append(" ").append(volumeFormat.format((double)drink.getVolume() / 1000));
             }
-            sb.append("\n");
+            sb.append(")\n");
+            sb.append(drink.getCategory()).append("\n");
             if (StringUtils.hasText(drink.getBrand())) {
                 sb.append(drink.getBrand()).append("\n");
             }

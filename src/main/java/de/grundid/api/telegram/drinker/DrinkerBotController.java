@@ -14,12 +14,14 @@ import org.telegram.api.objects.Update;
 @RestController
 public class DrinkerBotController {
 
+    private static final String BOT_OWNER = "@nitegate";
     @Autowired
     private DrinkerDatabaseService drinkerDatabaseService;
 
     @RequestMapping(value = "/bot/drinker", method = RequestMethod.POST)
     public ResponseEntity<?> post(@RequestBody Update update) {
         Message message = update.getMessage();
+        String username = message.getFrom() != null ? message.getFrom().getUserName() : null;
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
         if (StringUtils.hasText(message.getText())) {
@@ -33,6 +35,17 @@ public class DrinkerBotController {
                 drinkerDatabaseService.removeChatId(message.getChatId());
                 sendMessage.setText(
                         "Alles klar. Keine Nachrichten mehr.");
+            }
+            else if (userMessage.startsWith("/adminChat")) {
+                if (BOT_OWNER.equals(username)) {
+                    drinkerDatabaseService.addAdminChatId(message.getChatId());
+                    sendMessage.setText(
+                            "Ok, dieser Chat wurde zum Admin-Chat hochgestuft. Ich schicke jetzt Zusatzinformationen zu den Drinks.");
+                }
+                else {
+                    sendMessage.setText(
+                            "Sorry, aber du bist nicht mein Meister.");
+                }
             }
         }
         else {
