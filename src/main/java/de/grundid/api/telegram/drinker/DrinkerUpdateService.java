@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SendMessage;
@@ -49,13 +50,22 @@ public class DrinkerUpdateService {
                         drinkerDatabaseService.isAdminChat(chatId));
                 log.info("Message with drinks: {}", messageContent);
                 sendMessage.setText(messageContent);
-                ResponseEntity<String> responseEntity = restTemplate
-                        .postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage, String.class);
-                if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                    log.info("Send Message OK: " + responseEntity.getBody());
+                log.info(
+                        "Send Message request: " + Constants.BASEURL + apiKey + "/" + SendMessage.PATH + " for chatId: "
+                                + chatId);
+                try {
+                    ResponseEntity<String> responseEntity = restTemplate
+                            .postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage,
+                                    String.class);
+                    if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                        log.info("Send Message OK: " + responseEntity.getBody());
+                    }
+                    else {
+                        log.error("Error setting hook: " + responseEntity.getBody());
+                    }
                 }
-                else {
-                    log.error("Error setting hook: " + responseEntity.getBody());
+                catch (RestClientException e) {
+                    log.error(e.getMessage(), e);
                 }
             }
             drinkerDatabaseService.setLastCheck(System.currentTimeMillis());
