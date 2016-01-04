@@ -32,6 +32,10 @@ public class DrinkerUpdateService {
     @Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 20 * 1000)
     public void updateDrinks() {
         long lastCheck = drinkerDatabaseService.getLastCheck();
+        forceUpdateSince(lastCheck, true);
+    }
+
+    public void forceUpdateSince(long lastCheck, boolean updateLastCheck) {
         log.info("Checking for new drinks: " + lastCheck);
         PagedResponse pagedResponse = restTemplate
                 .getForObject("http://api.grundid.de/drinksmenu/drinks?since={since}&size=50", PagedResponse.class,
@@ -54,7 +58,9 @@ public class DrinkerUpdateService {
                     log.error("Error setting hook: " + responseEntity.getBody());
                 }
             }
-            drinkerDatabaseService.setLastCheck(System.currentTimeMillis());
+            if (updateLastCheck) {
+                drinkerDatabaseService.setLastCheck(System.currentTimeMillis());
+            }
         }
     }
 
@@ -79,6 +85,11 @@ public class DrinkerUpdateService {
             }
             sb.append("in Location ").append(location.getName()).append("\n");
             sb.append(location.getAddress()).append("\n");
+            if (adminChat) {
+                sb.append("[Bearbeiten]");
+                sb.append("(http://grundid.de/drinkerMenu/")
+                        .append(drink.getId()).append(")\n");
+            }
             sb.append("\n\n");
         }
         return sb.toString();

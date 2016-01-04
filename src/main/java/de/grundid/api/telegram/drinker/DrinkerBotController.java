@@ -20,6 +20,8 @@ public class DrinkerBotController {
     private static final String BOT_OWNER = "nitegate";
     @Autowired
     private DrinkerDatabaseService drinkerDatabaseService;
+    @Autowired
+    private DrinkerUpdateService drinkerUpdateService;
 
     @RequestMapping(value = "/bot/drinker", method = RequestMethod.POST)
     public ResponseEntity<?> post(@RequestBody Update update) {
@@ -45,6 +47,15 @@ public class DrinkerBotController {
                     drinkerDatabaseService.addAdminChatId(message.getChatId());
                     sendMessage.setText(
                             "Ok, dieser Chat wurde zum Admin-Chat hochgestuft. Ich schicke jetzt Zusatzinformationen zu den Drinks.");
+                }
+                else {
+                    sendMessage.setText(
+                            "Sorry, aber du bist nicht mein Meister.");
+                }
+            }
+            else if (userMessage.startsWith("/last")) {
+                if (BOT_OWNER.equals(username)) {
+                    drinkerUpdateService.forceUpdateSince(System.currentTimeMillis() - 24 * 60 * 60 * 1000, false);
                 }
                 else {
                     sendMessage.setText(
