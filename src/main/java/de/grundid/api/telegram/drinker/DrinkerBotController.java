@@ -55,7 +55,10 @@ public class DrinkerBotController {
             }
             else if (userMessage.startsWith("/last")) {
                 if (BOT_OWNER.equals(username)) {
-                    drinkerUpdateService.forceUpdateSince(System.currentTimeMillis() - 24 * 60 * 60 * 1000, false);
+                    sendMessage.setText(
+                            drinkerUpdateService
+                                    .getChangedDrinksSince(System.currentTimeMillis() - 24 * 60 * 60 * 1000,
+                                            message.getChatId()));
                 }
                 else {
                     sendMessage.setText(

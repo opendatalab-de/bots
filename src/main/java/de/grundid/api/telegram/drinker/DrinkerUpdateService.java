@@ -32,10 +32,10 @@ public class DrinkerUpdateService {
     @Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 20 * 1000)
     public void updateDrinks() {
         long lastCheck = drinkerDatabaseService.getLastCheck();
-        forceUpdateSince(lastCheck, true);
+        forceUpdateSince(lastCheck);
     }
 
-    public void forceUpdateSince(long lastCheck, boolean updateLastCheck) {
+    public void forceUpdateSince(long lastCheck) {
         log.info("Checking for new drinks: " + lastCheck);
         PagedResponse pagedResponse = restTemplate
                 .getForObject("http://api.grundid.de/drinksmenu/drinks?since={since}&size=50", PagedResponse.class,
@@ -58,9 +58,7 @@ public class DrinkerUpdateService {
                     log.error("Error setting hook: " + responseEntity.getBody());
                 }
             }
-            if (updateLastCheck) {
-                drinkerDatabaseService.setLastCheck(System.currentTimeMillis());
-            }
+            drinkerDatabaseService.setLastCheck(System.currentTimeMillis());
         }
     }
 
@@ -93,5 +91,21 @@ public class DrinkerUpdateService {
             sb.append("\n\n");
         }
         return sb.toString();
+    }
+
+    public String getChangedDrinksSince(long since, int chatId) {
+        log.info("Checking for new drinks: " + since);
+        PagedResponse pagedResponse = restTemplate
+                .getForObject("http://api.grundid.de/drinksmenu/drinks?since={since}&size=50", PagedResponse.class,
+                        since);
+        if (pagedResponse != null && pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
+            String messageContent = createMessage(pagedResponse.getContent(),
+                    drinkerDatabaseService.isAdminChat(chatId));
+            log.info("Message with drinks: {}", messageContent);
+            return messageContent;
+        }
+        else {
+            return "error getting drinks";
+        }
     }
 }
