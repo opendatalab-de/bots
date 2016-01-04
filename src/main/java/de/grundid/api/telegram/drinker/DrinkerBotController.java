@@ -59,6 +59,7 @@ public class DrinkerBotController {
                             drinkerUpdateService
                                     .getChangedDrinksSince(System.currentTimeMillis() - 24 * 60 * 60 * 1000,
                                             message.getChatId()));
+                    sendMessage.enableMarkdown(true);
                 }
                 else {
                     sendMessage.setText(
