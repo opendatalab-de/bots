@@ -13,8 +13,10 @@ import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SendMessage;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,6 +26,7 @@ public class DrinkerUpdateService {
     private static Logger log = LoggerFactory.getLogger(DrinkerUpdateService.class);
     private NumberFormat priceFormat = DecimalFormat.getCurrencyInstance(Locale.GERMANY);
     private NumberFormat volumeFormat = new DecimalFormat("0.0#'l'");
+    private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
     @Autowired
     private DrinkerDatabaseService drinkerDatabaseService;
     @Value("${telegram.drinkerBot.apiKey}")
@@ -51,7 +54,7 @@ public class DrinkerUpdateService {
                 log.info("Message with drinks: {}", messageContent);
                 sendMessage.setText(messageContent);
                 log.info(
-                        "Send Message request: " + Constants.BASEURL + apiKey + "/" + SendMessage.PATH + " for chatId: "
+                        "Send Message request: " + SendMessage.PATH + " for chatId: "
                                 + chatId);
                 try {
                     ResponseEntity<String> responseEntity = restTemplate
@@ -65,7 +68,7 @@ public class DrinkerUpdateService {
                     }
                 }
                 catch (RestClientException e) {
-                    log.error(e.getMessage(), e);
+                    drinkerDatabaseService.removeChatId(chatId);
                 }
             }
             drinkerDatabaseService.setLastCheck(System.currentTimeMillis());
@@ -108,14 +111,19 @@ public class DrinkerUpdateService {
         PagedResponse pagedResponse = restTemplate
                 .getForObject("http://api.grundid.de/drinksmenu/drinks?since={since}&size=50", PagedResponse.class,
                         since);
-        if (pagedResponse != null && pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
-            String messageContent = createMessage(pagedResponse.getContent(),
-                    drinkerDatabaseService.isAdminChat(chatId));
-            log.info("Message with drinks: {}", messageContent);
-            return messageContent;
+        if (pagedResponse != null && pagedResponse.getContent() != null) {
+            if (!pagedResponse.getContent().isEmpty()) {
+                String messageContent = createMessage(pagedResponse.getContent(),
+                        drinkerDatabaseService.isAdminChat(chatId));
+                log.info("Message with drinks: {}", messageContent);
+                return messageContent;
+            }
+            else {
+                return "Es gibt keine neuen Drinks seit " + dateFormat.format(new Date(since));
+            }
         }
         else {
-            return "error getting drinks";
+            return "Fehler beim Laden der Drinks";
         }
     }
 }

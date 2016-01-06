@@ -1,5 +1,6 @@
 package de.grundid.api.telegram.drinker;
 
+import de.grundid.api.telegram.CommandParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.telegram.api.methods.SendMessage;
 import org.telegram.api.objects.Message;
 import org.telegram.api.objects.Update;
+
+import java.text.ParseException;
 
 @RestController
 public class DrinkerBotController {
@@ -30,45 +33,62 @@ public class DrinkerBotController {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
         if (StringUtils.hasText(message.getText())) {
-            String userMessage = message.getText().toLowerCase();
-            if (userMessage.startsWith("/start")) {
-                drinkerDatabaseService.addChatId(message.getChatId());
-                sendMessage.setText(
-                        "Willkommen. Ich werde dir jetzt automatisch Nachrichten mit neuen Drinks aus der Drinker App schicken.");
-            }
-            else if (userMessage.startsWith("/stop")) {
-                drinkerDatabaseService.removeChatId(message.getChatId());
-                sendMessage.setText(
-                        "Alles klar. Keine Nachrichten mehr.");
-            }
-            else if (userMessage.startsWith("/adminchat")) {
-                log.info("admin chat request from {}", username);
-                if (BOT_OWNER.equals(username)) {
-                    drinkerDatabaseService.addAdminChatId(message.getChatId());
+            try {
+                CommandParser commandParser = new CommandParser(message.getText());
+                String command = commandParser.getCommand();
+                if ("start".equals(command)) {
+                    drinkerDatabaseService.addChatId(message.getChatId());
                     sendMessage.setText(
-                            "Ok, dieser Chat wurde zum Admin-Chat hochgestuft. Ich schicke jetzt Zusatzinformationen zu den Drinks.");
+                            "Willkommen. Ich werde dir jetzt automatisch Nachrichten mit neuen Drinks aus der Drinker App schicken.");
+                }
+                else if ("stop".equals(command)) {
+                    drinkerDatabaseService.removeChatId(message.getChatId());
+                    sendMessage.setText(
+                            "Alles klar. Keine Nachrichten mehr.");
+                }
+                else if ("adminchat".equals(command)) {
+                    log.info("admin chat request from {}", username);
+                    if (BOT_OWNER.equals(username)) {
+                        drinkerDatabaseService.addAdminChatId(message.getChatId());
+                        sendMessage.setText(
+                                "Ok, dieser Chat wurde zum Admin-Chat hochgestuft. Ich schicke jetzt Zusatzinformationen zu den Drinks.");
+                    }
+                    else {
+                        sendMessage.setText(
+                                "Sorry, aber du bist nicht mein Meister.");
+                    }
+                }
+                else if ("last".equals(command)) {
+                    int daysBack = 1;
+                    if (commandParser.hasParams()) {
+                        try {
+                            daysBack = Integer.parseInt(commandParser.getParams().get(0));
+                        }
+                        catch (NumberFormatException e) {
+                            log.error(e.getMessage(), e);
+                        }
+                    }
+                    if (BOT_OWNER.equals(username)) {
+                        sendMessage.setText(
+                                drinkerUpdateService
+                                        .getChangedDrinksSince(
+                                                System.currentTimeMillis() - daysBack * 24 * 60 * 60 * 1000,
+                                                message.getChatId()));
+                        sendMessage.enableMarkdown(true);
+                    }
+                    else {
+                        sendMessage.setText(
+                                "Sorry, aber du bist nicht mein Meister.");
+                    }
                 }
                 else {
                     sendMessage.setText(
-                            "Sorry, aber du bist nicht mein Meister.");
+                            "Sorry, aber der Befehl ist mir unbekannt.");
                 }
             }
-            else if (userMessage.startsWith("/last")) {
-                if (BOT_OWNER.equals(username)) {
-                    sendMessage.setText(
-                            drinkerUpdateService
-                                    .getChangedDrinksSince(System.currentTimeMillis() - 24 * 60 * 60 * 1000,
-                                            message.getChatId()));
-                    sendMessage.enableMarkdown(true);
-                }
-                else {
-                    sendMessage.setText(
-                            "Sorry, aber du bist nicht mein Meister.");
-                }
-            }
-            else {
+            catch (ParseException e) {
                 sendMessage.setText(
-                        "Sorry, aber der Befehl ist mir unbekannt.");
+                        "Befehl ungültig");
             }
         }
         else {
