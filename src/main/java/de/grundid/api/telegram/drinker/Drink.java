@@ -2,16 +2,17 @@ package de.grundid.api.telegram.drinker;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Drink {
 
     private String id;
     private String name;
     private String brand;
-    private Integer price;
-    private Integer volume;
     private String category;
     private String description;
+    private List<VolumePrice> volumePrices;
 
     public String getId() {
         return id;
@@ -37,20 +38,12 @@ public class Drink {
         this.brand = brand;
     }
 
-    public Integer getPrice() {
-        return price;
+    public List<VolumePrice> getVolumePrices() {
+        return volumePrices;
     }
 
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public Integer getVolume() {
-        return volume;
-    }
-
-    public void setVolume(Integer volume) {
-        this.volume = volume;
+    public void setVolumePrices(List<VolumePrice> volumePrices) {
+        this.volumePrices = volumePrices;
     }
 
     public String getCategory() {
