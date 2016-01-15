@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SendMessage;
 
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -80,33 +81,50 @@ public class DrinkerUpdateService {
         for (DrinkWithLocation drinkWithLocation : drinkWithLocations) {
             Drink drink = drinkWithLocation.getDrink();
             Location location = drinkWithLocation.getLocation();
-            sb.append("[").append(drink.getName()).append("]");
-            sb.append("(http://grundid.de/drinkerApp/").append(location.getPlaceId()).append(")\n");
+            StringBuilder drinkMessage = new StringBuilder();
+            drinkMessage.append("[").append(drink.getName()).append("]");
+            drinkMessage.append("(http://grundid.de/drinkerApp/").append(location.getPlaceId()).append(")\n");
             for (VolumePrice volumePrice : drink.getVolumePrices()) {
-                sb.append(
+                drinkMessage.append(
                         priceFormat.format((double)volumePrice.getPrice() / 100));
                 if (volumePrice.getVolume() != null) {
-                    sb.append(" ").append(volumeFormat.format((double)volumePrice.getVolume() / 1000));
+                    drinkMessage.append(" ").append(volumeFormat.format((double)volumePrice.getVolume() / 1000));
                 }
-                sb.append("\n");
+                drinkMessage.append("\n");
             }
-            sb.append(drink.getCategory()).append("\n");
+            drinkMessage.append(drink.getCategory()).append("\n");
             if (StringUtils.hasText(drink.getBrand())) {
-                sb.append(drink.getBrand()).append("\n");
+                drinkMessage.append(drink.getBrand()).append("\n");
             }
             if (StringUtils.hasText(drink.getDescription())) {
-                sb.append(drink.getDescription()).append("\n");
+                drinkMessage.append(drink.getDescription()).append("\n");
             }
-            sb.append("in Location ").append(location.getName()).append("\n");
-            sb.append(location.getAddress()).append("\n");
+            drinkMessage.append("in Location ").append(location.getName()).append("\n");
+            drinkMessage.append(location.getAddress()).append("\n");
             if (adminChat) {
-                sb.append("[Bearbeiten]");
-                sb.append("(http://grundid.de/drinkerMenu/")
+                drinkMessage.append("[Bearbeiten]");
+                drinkMessage.append("(http://grundid.de/drinkerMenu/")
                         .append(drink.getId()).append(")\n");
             }
-            sb.append("\n\n");
+            drinkMessage.append("\n\n");
+            if (messageTooLong(sb, drinkMessage)) {
+                sb.append("\nZu viele Drinks um alle anzuzeigen.");
+                break;
+            }
+            else {
+                sb.append(drinkMessage);
+            }
         }
         return sb.toString();
+    }
+
+    private boolean messageTooLong(StringBuilder sb, StringBuilder drinkMessage) {
+        try {
+            return drinkMessage.toString().getBytes("utf8").length + sb.toString().getBytes("utf8").length > 4000;
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getChangedDrinksSince(long since, int chatId) {
