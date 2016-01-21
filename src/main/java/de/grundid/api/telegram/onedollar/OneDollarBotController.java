@@ -27,8 +27,12 @@ public class OneDollarBotController {
 				String command = commandParser.getCommand();
 				if ("give".equals(command)) {
 					sendMessage.setText(
-							"[Give with PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=loki%2de%40web%2ede&lc=US&item_name=OneDollarBot&amount=1%2e00&currency_code=USD&button_subtype=services&no_note=0&tax_rate=0%2e000&shipping=0%2e00&bn=PP%2dBuyNowBF%3abtn_buynowCC_LG%2egif%3aNonHostedGuest)");
+							"[Give with PayPal](http://bit.ly/OneDollarBot)");
 					sendMessage.enableMarkdown(true);
+				}
+				else {
+					sendMessage.setText(
+							"Do you have some money for me?");
 				}
 			}
 			catch (ParseException e) {
@@ -38,7 +42,8 @@ public class OneDollarBotController {
 			return ResponseEntity.ok(sendMessage);
 		}
 		else {
-			return ResponseEntity.ok().body(null);
+			sendMessage.setText("Hey. What's up?");
+			return ResponseEntity.ok().body(sendMessage);
 		}
 	}
 }
