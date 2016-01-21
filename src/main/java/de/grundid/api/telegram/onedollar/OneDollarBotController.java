@@ -18,6 +18,8 @@ import java.util.Arrays;
 @RestController
 public class OneDollarBotController {
 
+	private static final String GIVE_ONE_DOLLAR = "Give one dollar \\U+1F4B0 \\U+1F4B5";
+
 	@RequestMapping(value = "/bot/onedollar", method = RequestMethod.POST)
 	public ResponseEntity<?> post(@RequestBody Update update) {
 		Message message = update.getMessage();
@@ -27,13 +29,13 @@ public class OneDollarBotController {
 		keyboardMarkup.setOneTimeKeyboad(true);
 		keyboardMarkup.setResizeKeyboard(true);
 		keyboardMarkup
-				.setKeyboard(Arrays.asList(Arrays.asList("/give", "/give 2"), Arrays.asList("/give 3", "/give 4")));
+				.setKeyboard(Arrays.asList(Arrays.asList(GIVE_ONE_DOLLAR)));
 
 		if (StringUtils.hasText(message.getText())) {
 			try {
 				CommandParser commandParser = new CommandParser(message.getText());
 				String command = commandParser.getCommand();
-				if ("give".equals(command)) {
+				if (GIVE_ONE_DOLLAR.equals(command) || "give".equals(command)) {
 					sendMessage.setText(
 							"[Give one dollar with PayPal](http://bit.ly/OneDollarBot)");
 					sendMessage.enableMarkdown(true);
