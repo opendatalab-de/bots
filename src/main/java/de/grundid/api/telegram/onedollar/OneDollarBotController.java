@@ -18,7 +18,8 @@ import java.util.Arrays;
 @RestController
 public class OneDollarBotController {
 
-	private static final String GIVE_ONE_DOLLAR = "Give one dollar \\U1F4B0 \\U1F4B5";
+	private static final String GIVE_ONE_DOLLAR =
+			"Give one dollar " + Character.toString((char)0xF4B0); // \\U1 \\U1F4B5";
 
 	@RequestMapping(value = "/bot/onedollar", method = RequestMethod.POST)
 	public ResponseEntity<?> post(@RequestBody Update update) {
