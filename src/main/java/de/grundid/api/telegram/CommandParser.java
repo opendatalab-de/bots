@@ -32,6 +32,10 @@ public class CommandParser {
         }
     }
 
+    public static boolean isCommand(String s) {
+        return (s != null && s.startsWith("/"));
+    }
+
     public boolean hasBotName() {
         return StringUtils.hasText(botName);
     }

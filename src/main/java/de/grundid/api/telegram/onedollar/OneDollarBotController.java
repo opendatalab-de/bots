@@ -33,24 +33,37 @@ public class OneDollarBotController {
 		keyboardMarkup
 				.setKeyboard(Arrays.asList(Arrays.asList(GIVE_ONE_DOLLAR)));
 		if (StringUtils.hasText(message.getText())) {
-			try {
-				CommandParser commandParser = new CommandParser(message.getText());
-				String command = commandParser.getCommand();
-				if (GIVE_ONE_DOLLAR.equals(command) || "give".equals(command)) {
-					sendMessage.setText(
-							"[Give one dollar with PayPal](http://bit.ly/OneDollarBot)");
-					sendMessage.enableMarkdown(true);
+			if (CommandParser.isCommand(message.getText())) {
+				try {
+					CommandParser commandParser = new CommandParser(message.getText());
+					String command = commandParser.getCommand();
+					if ("give".equals(command)) {
+						sendMessage.setText(
+								"[Give one dollar with PayPal](http://bit.ly/OneDollarBot)");
+						sendMessage.enableMarkdown(true);
+					}
+					else {
+						sendMessage.setText(
+								"Try /give");
+						sendMessage.setReplayMarkup(keyboardMarkup);
+					}
 				}
-				else {
+				catch (ParseException e) {
 					sendMessage.setText(
 							"Do you have some money for me?");
 					sendMessage.setReplayMarkup(keyboardMarkup);
 				}
 			}
-			catch (ParseException e) {
-				sendMessage.setText(
-						"Do you have some money for me?");
-				sendMessage.setReplayMarkup(keyboardMarkup);
+			else {
+				if (GIVE_ONE_DOLLAR.equals(message.getText())) {
+					sendMessage.setText(
+							"[Give one dollar with PayPal](http://bit.ly/OneDollarBot)");
+					sendMessage.enableMarkdown(true);
+				}
+				else {
+					sendMessage.setText("I have no money");
+					sendMessage.setReplayMarkup(keyboardMarkup);
+				}
 			}
 			return ResponseEntity.ok(sendMessage);
 		}
