@@ -31,7 +31,8 @@ public class LaBoeufBotController {
 					sendMessage.setText("Just do it.");
 				}
 				else if("shia".equals(command)){
-					sendMessage.setText("Yesterday you said tomorrow <b>so JUST DO IT</b>. NOTHING IS IMPOSSIBLE");
+					RandomShiaMessage randomShiaMessage = new RandomShiaMessage();
+					sendMessage.setText(randomShiaMessage.getRandomShiaMessage());
 				}
 				else if("help".equals(command)){
 					sendMessage.setText("![](http://www.lukashimsel.me/pics/gcc.png)");
