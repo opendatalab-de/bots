@@ -28,10 +28,13 @@ public class LaBoeufBotController {
 				CommandParser commandParser = new CommandParser(message.getText());
 				String command = commandParser.getCommand();
 				if("start".equals(command)){
-					sendMessage.setText("Just do it. nothing is impossible");
+					sendMessage.setText("Just do it.");
 				}
 				else if("shia".equals(command)){
-					sendMessage.setText("Yesterday you said tomorrow so JUST DO IT. NOTHING IS IMPOSSIBLE");
+					sendMessage.setText("Yesterday you said tomorrow <b>so JUST DO IT</b>. NOTHING IS IMPOSSIBLE");
+				}
+				else if("help".equals(command)){
+					sendMessage.setText("![](http://www.lukashimsel.me/pics/gcc.png)");
 				}
 				else if("stop".equals(command)){
 					sendMessage.setText("You did it?");
@@ -45,6 +48,7 @@ public class LaBoeufBotController {
 		} else{
 			sendMessage.setText("unknown command. use /stop to quit the bot");
 		}
+
 		return ResponseEntity.ok().body(sendMessage);
 	}
 }
