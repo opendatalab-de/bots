@@ -28,6 +28,9 @@ repositories {
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile 'org.springframework.boot:spring-boot-starter-integration'
+    compile 'org.springframework.boot:spring-boot-starter-mail'
+    compile 'org.springframework.integration:spring-integration-mail'
 
     compile 'com.google.guava:guava:18.0'
     compile "commons-io:commons-io:2.4"
