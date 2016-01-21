@@ -1,6 +1,7 @@
 package de.grundid.api.telegram.onedollar;
 
 import de.grundid.api.telegram.CommandParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,13 +21,19 @@ public class OneDollarBotController {
 
     private static final char[] MONEY_BAG = Character.toChars(0x1F4B0);
     private static final String GIVE_ONE_DOLLAR =
-            "Give one dollar " + MONEY_BAG[0] + MONEY_BAG[1];
+            "I'll give you one dollar " + MONEY_BAG[0] + MONEY_BAG[1];
+
+    @Autowired
+    private OneDollarDatabaseService oneDollarDatabaseService;
+
+
 
     @RequestMapping(value = "/bot/onedollar", method = RequestMethod.POST)
     public ResponseEntity<?> post(@RequestBody Update update) {
         Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
+
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         keyboardMarkup.setOneTimeKeyboad(true);
         keyboardMarkup.setResizeKeyboard(true);
@@ -56,6 +63,7 @@ public class OneDollarBotController {
                     sendMessage.setText(
                             "[Give one dollar with PayPal](http://bit.ly/OneDollarBot)");
                     sendMessage.enableMarkdown(true);
+                    oneDollarDatabaseService.addChatId(message.getChatId(), message.getFrom().getId());
                 } else {
                     sendMessage.setText("I have no money. You Chat Id: " + message.getChatId());
                     sendMessage.setReplayMarkup(keyboardMarkup);
