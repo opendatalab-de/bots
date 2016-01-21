@@ -18,8 +18,9 @@ import java.util.Arrays;
 @RestController
 public class OneDollarBotController {
 
+	private static final char[] MONEY_BAG = Character.toChars(0x1F4B0);
 	private static final String GIVE_ONE_DOLLAR =
-			"Give one dollar " + Character.toString((char)0x1F4B0); // \\U1 \\U1F4B5";
+			"Give one dollar " + MONEY_BAG[0] + MONEY_BAG[1];
 
 	@RequestMapping(value = "/bot/onedollar", method = RequestMethod.POST)
 	public ResponseEntity<?> post(@RequestBody Update update) {
@@ -31,7 +32,6 @@ public class OneDollarBotController {
 		keyboardMarkup.setResizeKeyboard(true);
 		keyboardMarkup
 				.setKeyboard(Arrays.asList(Arrays.asList(GIVE_ONE_DOLLAR)));
-
 		if (StringUtils.hasText(message.getText())) {
 			try {
 				CommandParser commandParser = new CommandParser(message.getText());
