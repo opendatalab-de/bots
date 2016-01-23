@@ -40,6 +40,9 @@ public class LaBoeufBotController {
 				else if("HELP".equals(command.toUpperCase())){
 					sendMessage.setText("Commands:\n/start Start conversation\n/shia get a motivation message\n/about A message that describes why i made this bot\n/help this message");
 				}
+				else if("AREYOUFAMOUS".equals(command.toUpperCase()) || "ARE YOU FAMOUS".equals(command.toUpperCase())){
+					sendMessage.setText("No more");
+				}
 				else{
 					sendMessage.setText("unknown command");
 				}
