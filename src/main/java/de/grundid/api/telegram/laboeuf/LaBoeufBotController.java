@@ -41,9 +41,10 @@ public class LaBoeufBotController {
 							text = text + sendMessage.getChatId().toString();
 						}
 						sendMessage.setText(text);
+					} else {
+						RandomShiaMessage randomShiaMessage = new RandomShiaMessage();
+						sendMessage.setText(randomShiaMessage.getRandomShiaMessage());
 					}
-					RandomShiaMessage randomShiaMessage = new RandomShiaMessage();
-					sendMessage.setText(randomShiaMessage.getRandomShiaMessage());
 				}
 				else if("ABOUT".equals(command.toUpperCase())){
 					sendMessage.setText("About:\nThis bot is made to motivate you. The idea came, when I saw Shia Laboeuf's 'Just Do It' motivation speech. https://youtu.be/ZXsQAXx_ao0\nCreated By Lukas Himsel (http://lukashimsel.me)");
