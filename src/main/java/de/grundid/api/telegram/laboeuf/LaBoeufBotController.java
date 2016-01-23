@@ -33,6 +33,15 @@ public class LaBoeufBotController {
 					sendMessage.setText("Just do it.");
 				}
 				else if("SHIA".equals(command.toUpperCase())){
+					if("INSULT".equals(params.get(0).toUpperCase())){
+						String text = "I don't like you";
+						if(params.get(1)!=null){
+							text = text + params.get(1);
+						} else{
+							text = text + sendMessage.getChatId().toString();
+						}
+						sendMessage.setText(text);
+					}
 					RandomShiaMessage randomShiaMessage = new RandomShiaMessage();
 					sendMessage.setText(randomShiaMessage.getRandomShiaMessage());
 				}
