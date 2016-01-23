@@ -28,6 +28,7 @@ public class LaBoeufBotController {
 			try{
 				CommandParser commandParser = new CommandParser(message.getText());
 				String command = commandParser.getCommand();
+				List<String> params= commandParser.getParams();
 				if("START".equals(command.toUpperCase())){
 					sendMessage.setText("Just do it.");
 				}
@@ -44,10 +45,12 @@ public class LaBoeufBotController {
 				else if("AREYOUFAMOUS".equals(command.toUpperCase())){
 					sendMessage.setText("No more");
 				}
-				else if("ARE".equals(command.toUpperCase())){
-					List<String> params= commandParser.getParams();
-					if("YOU".equals(params.get(0).toUpperCase()) && "FAMOUS".equals(params.get(1).toUpperCase())){
+				else if("ARE".equals(command.toUpperCase()) && "YOU".equals(params.get(0).toUpperCase())){
+					if("FAMOUS".equals(params.get(1).toUpperCase()) || "FAMOUS?".equals(params.get(1).toUpperCase())){
 						sendMessage.setText("I'm not famous anymore.\nhttp://lukashimsel.me/pics/doit/famous.jpg");
+					}
+					else{
+						sendMessage.setText("unknown command");
 					}
 				}
 				else{
