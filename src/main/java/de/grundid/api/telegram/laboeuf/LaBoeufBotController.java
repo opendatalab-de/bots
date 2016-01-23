@@ -14,6 +14,7 @@ import org.telegram.api.objects.Message;
 import org.telegram.api.objects.Update;
 
 import java.text.ParseException;
+import java.util.List;
 
 @RestController
 public class LaBoeufBotController {
@@ -40,8 +41,14 @@ public class LaBoeufBotController {
 				else if("HELP".equals(command.toUpperCase())){
 					sendMessage.setText("Commands:\n/start Start conversation\n/shia get a motivation message\n/about A message that describes why i made this bot\n/help this message");
 				}
-				else if("AREYOUFAMOUS".equals(command.toUpperCase()) || "ARE YOU FAMOUS".equals(command.toUpperCase())){
+				else if("AREYOUFAMOUS".equals(command.toUpperCase())){
 					sendMessage.setText("No more");
+				}
+				else if("ARE".equals(command.toUpperCase())){
+					List<String> params= commandParser.getParams();
+					if("YOU".equals(params.get(0).toUpperCase()) && "FAMOUS".equals(params.get(1).toUpperCase())){
+						sendMessage.setText("I'm not famous anymore.\nhttp://lukashimsel.me/pics/doit/famous.jpg");
+					}
 				}
 				else{
 					sendMessage.setText("unknown command");
