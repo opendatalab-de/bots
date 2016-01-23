@@ -1,6 +1,6 @@
 package de.grundid.api.telegram.onedollar;
 
-public class UserAndChatId {
+public class UserAndChatId implements Comparable<UserAndChatId> {
 
     private Integer chatId;
     private Integer userId;
@@ -27,5 +27,14 @@ public class UserAndChatId {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public int compareTo(UserAndChatId o) {
+        int c = chatId.compareTo(o.chatId);
+        if (c == 0) {
+            c = userId.compareTo(o.userId);
+        }
+        return c;
     }
 }
