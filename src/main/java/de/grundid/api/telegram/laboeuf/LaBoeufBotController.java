@@ -33,16 +33,8 @@ public class LaBoeufBotController {
 					sendMessage.setText("Just do it.");
 				}
 				else if("SHIA".equals(command.toUpperCase())){
-					if("INSULT".equals(params.get(0).toUpperCase())){
-						String text = "I don't like you ";
-						if(params.get(1)!=null){
-							text = text + params.get(1);
-						}
-						sendMessage.setText(text);
-					} else {
-						RandomShiaMessage randomShiaMessage = new RandomShiaMessage();
-						sendMessage.setText(randomShiaMessage.getRandomShiaMessage());
-					}
+					RandomShiaMessage randomShiaMessage = new RandomShiaMessage();
+					sendMessage.setText(randomShiaMessage.getRandomShiaMessage());
 				}
 				else if("ABOUT".equals(command.toUpperCase())){
 					sendMessage.setText("About:\nThis bot is made to motivate you. The idea came, when I saw Shia Laboeuf's 'Just Do It' motivation speech. https://youtu.be/ZXsQAXx_ao0\nCreated By Lukas Himsel (http://lukashimsel.me)");
@@ -70,7 +62,6 @@ public class LaBoeufBotController {
 		} else{
 			sendMessage.setText("unknown command.");
 		}
-
 		return ResponseEntity.ok().body(sendMessage);
 	}
 }
