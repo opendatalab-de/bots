@@ -42,11 +42,8 @@ public class LaBoeufBotController {
 				else if("HELP".equals(command.toUpperCase())){
 					sendMessage.setText("Commands:\n/start Start conversation\n/shia get a motivation message\n/about A message that describes why i made this bot\n/help this message");
 				}
-				else if("AREYOUFAMOUS".equals(command.toUpperCase())){
-					sendMessage.setText("No more");
-				}
-				else if("ARE".equals(command.toUpperCase()) && "YOU".equals(params.get(0).toUpperCase())){
-					if("FAMOUS".equals(params.get(1).toUpperCase()) || "FAMOUS?".equals(params.get(1).toUpperCase())){
+				else if("ARE".equals(command.toUpperCase()) && params.size()==2){
+					if("YOU".equals(params.get(0).toUpperCase()) && "FAMOUS?".equals(params.get(1).toUpperCase())){
 						sendMessage.setText("I'm not famous anymore.\nhttp://lukashimsel.me/pics/doit/famous.jpg");
 					}
 					else{
