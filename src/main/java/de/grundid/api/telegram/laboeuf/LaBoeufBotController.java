@@ -39,9 +39,12 @@ public class LaBoeufBotController {
                     RandomShiaMessage randomShiaMessage = new RandomShiaMessage();
                     sendMessage.setText(randomShiaMessage.getRandomShiaMessage());
                 } else if ("ABOUT".equals(command.toUpperCase())) {
-                    sendMessage.setText("About:\nThis bot is made to motivate you. The idea came, when I saw Shia Laboeuf's 'Just Do It' motivation speech. https://youtu.be/ZXsQAXx_ao0\nCreated By Lukas Himsel (http://lukashimsel.me)");
+                    sendMessage.setText("About:\nThis bot is made to motivate you. The idea came, when I saw Shia " +
+                            "Laboeuf's 'Just Do It' motivation speech. https://youtu.be/ZXsQAXx_ao0\n" +
+                            "Created By Lukas Himsel (http://lukashimsel.me)\n\n" +
+                            "Please rate my bot at: https://telegram.me/storebot?start=LaBoeuf_Bot");
                 } else if ("RATE".equals(command.toUpperCase())) {
-                    sendMessage.setText("Please rate my bot at [https://telegram.me/storebot?start=LaBoeuf_Bot](Store Bot)");
+                    sendMessage.setText("Please rate my bot at: https://telegram.me/storebot?start=LaBoeuf_Bot");
                 } else if ("HELP".equals(command.toUpperCase())) {
                     sendMessage.setText("Commands:\n/start Start conversation\n/shia get a motivation message\n/about A message that describes why i made this bot\n/help this message");
                 } else if ("ARE".equals(command.toUpperCase()) && params.size() == 2) {
