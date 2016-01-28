@@ -35,4 +35,12 @@ public class LaBoeufBotControllerTest {
         assertTrue("YOU".equals(params.get(0).toUpperCase()));
         assertEquals("FAMOUS?", params.get(1).toUpperCase());
     }
+
+    @Test
+    public void testShiaInsults() throws Exception {
+        CommandParser parser = new CommandParser("/shia insult FRANZ");
+        List<String> params = parser.getParams();
+        String command = parser.getCommand();
+        assertTrue("SHIA".equals(command.toUpperCase()));
+    }
 }
