@@ -28,7 +28,7 @@ public class LaBoeufBotController {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
         if (StringUtils.hasText(message.getText())) {
-            log.info(message.getText());
+            log.info(getUserName(message) + " - " + message.getText());
             try {
                 CommandParser commandParser = new CommandParser(message.getText());
                 String command = commandParser.getCommand();
@@ -63,5 +63,13 @@ public class LaBoeufBotController {
             sendMessage.setText("unknown command.");
         }
         return ResponseEntity.ok().body(sendMessage);
+    }
+
+    private String getUserName(Message message) {
+        if (message.getFrom() != null && message.getFrom().getUserName() != null) {
+            return message.getFrom().getUserName();
+        } else {
+            return "unknown username";
+        }
     }
 }
