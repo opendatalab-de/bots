@@ -2,7 +2,6 @@ package de.grundid.api.telegram.onedollar;
 
 import de.grundid.api.telegram.CommandParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,6 @@ import org.telegram.api.objects.Message;
 import org.telegram.api.objects.ReplyKeyboardMarkup;
 import org.telegram.api.objects.Update;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -45,7 +43,6 @@ public class OneDollarBotController {
                     if ("give".equals(command)) {
                         sendMessage.setText("[Give one dollar with PayPal](http://bit.ly/OneDollarBot)");
                         sendMessage.enableMarkdown(true);
-                        imageUpdateService.setSendImageChatid(message.getChatId());
                     }
                     else {
                         sendMessage.setText("Try /give");
@@ -66,10 +63,8 @@ public class OneDollarBotController {
                 else {
                     sendMessage.setText("I have no money. You Chat Id: " + message.getChatId());
                     sendMessage.setReplayMarkup(keyboardMarkup);
-                    HttpOutputMessage sendPhoto = imageUpdateService
-                            .createSendPhoto("shia01.png", null, message.getChatId());
-                    return ResponseEntity.ok().headers(sendPhoto.getHeaders())
-                            .body(((ByteArrayOutputStream)sendPhoto.getBody()).toByteArray());
+                    imageUpdateService.sendPhoto("shia01.png", "Good luck", message.getChatId());
+                    return ResponseEntity.ok("");
                 }
             }
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(sendMessage);
@@ -77,9 +72,7 @@ public class OneDollarBotController {
         else {
             sendMessage.setText("Hey. What's up?");
             sendMessage.setReplayMarkup(keyboardMarkup);
-            HttpOutputMessage sendPhoto = imageUpdateService.createSendPhoto("shia02.png", null, message.getChatId());
-            return ResponseEntity.ok().headers(sendPhoto.getHeaders())
-                    .body(((ByteArrayOutputStream)sendPhoto.getBody()).toByteArray());
+            return ResponseEntity.ok(sendMessage);
         }
     }
 }

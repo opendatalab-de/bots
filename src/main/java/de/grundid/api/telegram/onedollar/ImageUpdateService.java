@@ -21,7 +21,6 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SendPhoto;
 
@@ -32,74 +31,52 @@ public class ImageUpdateService {
 
     private static Logger log = LoggerFactory.getLogger(ImageUpdateService.class);
     @Value("${telegram.onedollarBot.apiKey}") private String apiKey;
-    private RestTemplate restTemplate = new RestTemplate();
-    private Integer sendImageChatid;
     @Value("${datastoreDir}") private String datastoreDir;
 
-    public void updateImages() throws IOException {
-        if (sendImageChatid != null) {
-            String url = Constants.BASEURL + apiKey + "/" + SendPhoto.PATH;
-            System.out.println(url);
-            InputStream image = OneDollarBotController.class.getResourceAsStream("/hochzeitsplanerplus-qrcode.png");
-
-/*            ByteArrayOutputStream outImage = new ByteArrayOutputStream();
-            IOUtils.copy(image, outImage); */
-            CloseableHttpClient httpclient = HttpClients.createDefault();
+    public void sendPhoto(String imageName, String caption, Integer chatId) throws IOException {
+        String url = Constants.BASEURL + apiKey + "/" + SendPhoto.PATH;
+        System.out.println(url);
+        InputStream image = new FileInputStream(datastoreDir + File.separator + imageName);
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpPost httppost = new HttpPost(url);
+            HttpEntity reqEntity = MultipartEntityBuilder.create()
+                    .addPart("chat_id", new StringBody("" + chatId, ContentType.TEXT_PLAIN.withCharset("utf8")))
+                    .addPart("caption", new StringBody(caption, ContentType.TEXT_PLAIN.withCharset("utf8")))
+                    .addPart("photo", new InputStreamBody(image, ContentType.create("image/png"), "image.png")).build();
+            httppost.setEntity(reqEntity);
+            System.out.println("executing request " + httppost.getRequestLine());
+            CloseableHttpResponse response = httpclient.execute(httppost);
             try {
-                HttpPost httppost = new HttpPost(url);
-                HttpEntity reqEntity = MultipartEntityBuilder.create().addPart("chat_id",
-                        new StringBody("" + sendImageChatid, ContentType.TEXT_PLAIN.withCharset("utf8"))).addPart(
-                        "caption",
-                        new StringBody("A binary file of some kind", ContentType.TEXT_PLAIN.withCharset("utf8")))
-                        //.addPart("photo", new ByteArrayBody(outImage.toByteArray(), ContentType.create("image/png"), "image.png"))
-                        .addPart("photo", new InputStreamBody(image, ContentType.create("image/png"), "image.png"))
-                        .build();
-                httppost.setEntity(reqEntity);
-                System.out.println("executing request " + httppost.getRequestLine());
-                // httppost.getEntity().writeTo(System.out);
-                CloseableHttpResponse response = httpclient.execute(httppost);
-                try {
-                    System.out.println("----------------------------------------");
-                    System.out.println(response.getStatusLine());
-                    HttpEntity resEntity = response.getEntity();
-                    if (resEntity != null) {
-                        System.out.println("Response content length: " + resEntity.getContentLength());
-                        resEntity.writeTo(System.out);
-                    }
-                    EntityUtils.consume(resEntity);
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    resEntity.writeTo(System.out);
                 }
-                finally {
-                    response.close();
-                }
+                EntityUtils.consume(resEntity);
             }
             finally {
-                httpclient.close();
+                response.close();
             }
         }
-        sendImageChatid = null;
+        finally {
+            httpclient.close();
+        }
     }
 
-    public Integer getSendImageChatid() {
-        return sendImageChatid;
-    }
-
-    public void setSendImageChatid(Integer sendImageChatid) {
-        this.sendImageChatid = sendImageChatid;
-    }
-
-    public void sendPhoto(Integer chatId, InputStream image) {
-        HttpPost httppost = new HttpPost("");
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create()
-                .addPart("chat_id", new StringBody("" + chatId, ContentType.TEXT_PLAIN.withCharset("utf8"))).addPart(
-                        "caption",
-                        new StringBody("A binary file of some kind", ContentType.TEXT_PLAIN.withCharset("utf8")))
-                        //.addPart("photo", new ByteArrayBody(outImage.toByteArray(), ContentType.create("image/png"), "image.png"))
-                .addPart("photo", new InputStreamBody(image, ContentType.create("image/png"), "image.png"));
-        builder.build();
-        System.out.println("executing request " + httppost.getRequestLine());
-        // httppost.getEntity().writeTo(System.out);
-    }
-
+    /*
+        public void sendPhoto(Integer chatId, InputStream image) {
+            HttpPost httppost = new HttpPost("");
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+                    .addPart("chat_id", new StringBody("" + chatId, ContentType.TEXT_PLAIN.withCharset("utf8"))).addPart(
+                            "caption",
+                            new StringBody("A binary file of some kind", ContentType.TEXT_PLAIN.withCharset("utf8")))
+                            //.addPart("photo", new ByteArrayBody(outImage.toByteArray(), ContentType.create("image/png"), "image.png"))
+                    .addPart("photo", new InputStreamBody(image, ContentType.create("image/png"), "image.png"));
+            builder.build();
+            System.out.println("executing request " + httppost.getRequestLine());
+            // httppost.getEntity().writeTo(System.out);
+        }
+    */
     public HttpOutputMessage createSendPhoto(String fileName, String caption, Integer chatId) throws IOException {
         FormHttpMessageConverter converter = new FormHttpMessageConverter();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
