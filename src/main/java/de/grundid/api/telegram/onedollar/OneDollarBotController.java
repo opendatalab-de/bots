@@ -1,6 +1,5 @@
 package de.grundid.api.telegram.onedollar;
 
-import de.grundid.api.telegram.CommandParser;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -11,7 +10,6 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.ParseException;
 import java.util.Arrays;
 
 @Controller
@@ -51,7 +48,7 @@ public class OneDollarBotController {
         keyboardMarkup.setResizeKeyboard(true);
         keyboardMarkup
                 .setKeyboard(Arrays.asList(Arrays.asList(GIVE_ONE_DOLLAR)));
-        if (StringUtils.hasText(message.getText())) {
+       /* if (StringUtils.hasText(message.getText())) {
             if (CommandParser.isCommand(message.getText())) {
                 try {
                     CommandParser commandParser = new CommandParser(message.getText());
@@ -82,7 +79,7 @@ public class OneDollarBotController {
                 }
             }
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(sendMessage);
-        } else {
+        } else {*/
             sendMessage.setText("Hey. What's up?");
             sendMessage.setReplayMarkup(keyboardMarkup);
             SendPhoto sendPhoto = new SendPhoto();
@@ -127,6 +124,6 @@ public class OneDollarBotController {
 
 
             return ResponseEntity.ok().headers(httpHeaders).body(outputStream.toByteArray());
-        }
+        //}
     }
 }
