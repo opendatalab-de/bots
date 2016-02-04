@@ -21,6 +21,7 @@ jar {
 
 repositories {
     jcenter()
+    mavenCentral()
     maven { url "http://repo.spring.io/snapshot" }
     maven { url "http://repo.spring.io/milestone" }
 }
@@ -31,6 +32,8 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-integration'
     compile 'org.springframework.boot:spring-boot-starter-mail'
     compile 'org.springframework.integration:spring-integration-mail'
+    compile 'org.apache.httpcomponents:httpclient:4.5.1'
+    compile 'org.apache.httpcomponents:httpmime:4.5.1'
 
     compile 'com.google.guava:guava:18.0'
     compile "commons-io:commons-io:2.4"
