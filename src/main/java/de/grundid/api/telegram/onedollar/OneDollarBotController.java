@@ -1,22 +1,34 @@
 package de.grundid.api.telegram.onedollar;
 
 import de.grundid.api.telegram.CommandParser;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 import org.telegram.api.methods.SendMessage;
+import org.telegram.api.methods.SendPhoto;
 import org.telegram.api.objects.Message;
 import org.telegram.api.objects.ReplyKeyboardMarkup;
 import org.telegram.api.objects.Update;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Arrays;
 
-@RestController
+@Controller
 public class OneDollarBotController {
 
     private static final char[] MONEY_BAG = Character.toChars(0x1F4B0);
@@ -29,7 +41,7 @@ public class OneDollarBotController {
 
 
     @RequestMapping(value = "/bot/onedollar", method = RequestMethod.POST)
-    public ResponseEntity<?> post(@RequestBody Update update) {
+    public ResponseEntity<?> post(@RequestBody Update update) throws IOException {
         Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
@@ -69,11 +81,52 @@ public class OneDollarBotController {
                     sendMessage.setReplayMarkup(keyboardMarkup);
                 }
             }
-            return ResponseEntity.ok(sendMessage);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(sendMessage);
         } else {
             sendMessage.setText("Hey. What's up?");
             sendMessage.setReplayMarkup(keyboardMarkup);
-            return ResponseEntity.ok().body(sendMessage);
+            SendPhoto sendPhoto = new SendPhoto();
+            sendPhoto.setChatId(message.getChatId());
+            sendPhoto.setCaption("caption");
+            sendPhoto.setPhoto("blabla");
+
+            FormHttpMessageConverter converter = new FormHttpMessageConverter();
+
+            InputStream image = OneDollarBotController.class.getResourceAsStream("/hochzeitsplanerplus-qrcode.png");
+
+            ByteArrayOutputStream outImage = new ByteArrayOutputStream();
+            IOUtils.copy(image, outImage);
+
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+
+            try {
+                HttpOutputMessage outputMessage = new HttpOutputMessage() {
+                    @Override
+                    public OutputStream getBody() throws IOException {
+                        return outputStream;
+                    }
+
+                    @Override
+                    public HttpHeaders getHeaders() {
+                        return httpHeaders;
+                    }
+                };
+                MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+                map.add("method", "sendPhoto");
+                map.add("chat_id", "" + message.getChatId());
+                map.add("caption", "Imagebeschreibung");
+                map.add("photo", outImage.toByteArray());
+
+                converter.write(map, MediaType.MULTIPART_FORM_DATA, outputMessage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            return ResponseEntity.ok().headers(httpHeaders).body(outputStream.toByteArray());
         }
     }
 }
