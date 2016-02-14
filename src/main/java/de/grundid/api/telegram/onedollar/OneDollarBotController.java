@@ -51,7 +51,7 @@ public class OneDollarBotController {
         ReplyKeyboardMarkup keyboardMarkup = createKeyboard(Arrays.asList(Arrays.asList(GIVE_ONE_DOLLAR)));
         areYouChristian = createKeyboard(Arrays.asList(Arrays.asList(YES_IM_CHRISTIAN, NO)));
         areYouRich = createKeyboard(Arrays.asList(Arrays.asList(YES_IM_VERY_RICH), Arrays.asList(YES_IM_QUITE_RICH),
-                Arrays.asList("No, I'm not rich.")));
+                Arrays.asList(NO_IM_NOT_RICH)));
         if (StringUtils.hasText(message.getText())) {
             if (CommandParser.isCommand(message.getText())) {
                 try {
