@@ -49,7 +49,7 @@ public class OneDollarBotController {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
         ReplyKeyboardMarkup keyboardMarkup = createKeyboard(Arrays.asList(Arrays.asList(GIVE_ONE_DOLLAR)));
-        areYouChristian = createKeyboard(Arrays.asList(Arrays.asList("Yes, I'm Christian", "No.")));
+        areYouChristian = createKeyboard(Arrays.asList(Arrays.asList(YES_IM_CHRISTIAN, NO)));
         areYouRich = createKeyboard(Arrays.asList(Arrays.asList(YES_IM_VERY_RICH), Arrays.asList(YES_IM_QUITE_RICH),
                 Arrays.asList("No, I'm not rich.")));
         if (StringUtils.hasText(message.getText())) {
