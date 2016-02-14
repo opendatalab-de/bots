@@ -30,8 +30,10 @@ import java.io.*;
 public class ImageUpdateService {
 
     private static Logger log = LoggerFactory.getLogger(ImageUpdateService.class);
-    @Value("${telegram.onedollarBot.apiKey}") private String apiKey;
-    @Value("${datastoreDir}") private String datastoreDir;
+    @Value("${telegram.onedollarBot.apiKey}")
+    private String apiKey;
+    @Value("${datastoreDir}")
+    private String datastoreDir;
 
     public void sendPhoto(String imageName, String caption, Integer chatId) throws IOException {
         String url = Constants.BASEURL + apiKey + "/" + SendPhoto.PATH;
@@ -43,7 +45,9 @@ public class ImageUpdateService {
             HttpEntity reqEntity = MultipartEntityBuilder.create()
                     .addPart("chat_id", new StringBody("" + chatId, ContentType.TEXT_PLAIN.withCharset("utf8")))
                     .addPart("caption", new StringBody(caption, ContentType.TEXT_PLAIN.withCharset("utf8")))
-                    .addPart("photo", new InputStreamBody(image, ContentType.create("image/png"), "image.png")).build();
+                    .addPart("photo", new InputStreamBody(image,
+                            ContentType.create(imageName.endsWith(".png") ? "image/png" : "image/jpg"),
+                            imageName.endsWith(".png") ? "image.png" : "image.jpg")).build();
             httppost.setEntity(reqEntity);
             System.out.println("executing request " + httppost.getRequestLine());
             CloseableHttpResponse response = httpclient.execute(httppost);
