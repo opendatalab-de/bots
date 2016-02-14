@@ -89,7 +89,12 @@ public class OneDollarBotController {
                     if (now.get(Calendar.MONTH) == Calendar.FEBRUARY && now.get(Calendar.DAY_OF_MONTH) == 14
                             && !knownNoChristianChats.contains(sendMessage.getChatId())) {
                         handleBirthday(sendMessage, message.getText());
-                        return ResponseEntity.ok(sendMessage);
+                        if (sendMessage.getText() != null) {
+                            return ResponseEntity.ok(sendMessage);
+                        }
+                        else {
+                            return ResponseEntity.ok().build();
+                        }
                     }
                     else {
                         sendMessage.setText("I have no money. You Chat Id: " + message.getChatId());
@@ -110,7 +115,8 @@ public class OneDollarBotController {
 
     private void handleBirthday(SendMessage sendMessage, String message) throws IOException {
         if (knownChristianChats.contains(sendMessage.getChatId())) {
-            sendMessage.setText("We have already talked, sir. Have a nice Birthday!");
+            sendMessage.setText(
+                    "We have already talked, sir. Have a nice Birthday! " + BIRTHDAY_CAKE[0] + BIRTHDAY_CAKE[1]);
         }
         else if (YES_IM_CHRISTIAN.equals(message)) {
             sendMessage
