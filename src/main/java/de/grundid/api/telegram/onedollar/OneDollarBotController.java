@@ -25,14 +25,15 @@ public class OneDollarBotController {
     private static final char[] SMILE_WITH_GLASSES = Character.toChars(0x1F60E);
     private static final String GIVE_ONE_DOLLAR = "I'll give you one dollar " + MONEY_BAG[0] + MONEY_BAG[1];
     private static final String YES_IM_CHRISTIAN =
-            "Yes, I'm Christian." + SMILE_WITH_GLASSES[0] + SMILE_WITH_GLASSES[1];
+            "Yes, I'm Christian. " + SMILE_WITH_GLASSES[0] + SMILE_WITH_GLASSES[1];
     private static final String YES_IM_VERY_RICH =
-            "Yes, I'm very rich." + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0]
-                    + MONEY_BAG[1];
+            "Yes, I'm very rich. " + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0] + MONEY_BAG[1] + " "
+                    + MONEY_BAG[0] + MONEY_BAG[1];
     private static final String YES_IM_QUITE_RICH =
-            "Yes, I'm quite rich." + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0] + MONEY_BAG[1];
+            "Yes, I'm quite rich. " + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0] + MONEY_BAG[1];
     private static final String NO_IM_NOT_RICH =
-            "No, I'm not rich." + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0] + MONEY_BAG[1];
+            "No, I'm not rich. " + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0] + MONEY_BAG[1];
+    private static final String NO = "No";
     @Autowired
     private OneDollarDatabaseService oneDollarDatabaseService;
     @Autowired
@@ -40,6 +41,7 @@ public class OneDollarBotController {
     private ReplyKeyboardMarkup areYouRich;
     private ReplyKeyboardMarkup areYouChristian;
     private Set<Integer> knownChristianChats = new HashSet<>();
+    private Set<Integer> knownNoChristianChats = new HashSet<>();
 
     @RequestMapping(value = "/bot/onedollar", method = RequestMethod.POST)
     public ResponseEntity<?> post(@RequestBody Update update) throws IOException {
@@ -78,7 +80,8 @@ public class OneDollarBotController {
                 }
                 else {
                     Calendar now = Calendar.getInstance();
-                    if (now.get(Calendar.MONTH) == Calendar.FEBRUARY && now.get(Calendar.DAY_OF_MONTH) == 14) {
+                    if (now.get(Calendar.MONTH) == Calendar.FEBRUARY && now.get(Calendar.DAY_OF_MONTH) == 14
+                            && !knownNoChristianChats.contains(sendMessage.getChatId())) {
                         handleBirthday(sendMessage, message.getText());
                         return ResponseEntity.ok(sendMessage);
                     }
@@ -118,6 +121,11 @@ public class OneDollarBotController {
         else if (NO_IM_NOT_RICH.equals(message)) {
             sendMessage.setText("You should start making good Apps, sir. Talk to Adrian.");
             knownChristianChats.add(sendMessage.getChatId());
+        }
+        else if (NO.equals(message)) {
+            sendMessage.setText("[Give one dollar with PayPal](http://bit.ly/OneDollarBot)");
+            sendMessage.enableMarkdown(true);
+            knownNoChristianChats.add(sendMessage.getChatId());
         }
         else {
             sendMessage.setText("Good day to you, sir. Are you Christian?");
