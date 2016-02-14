@@ -23,6 +23,8 @@ public class OneDollarBotController {
 
     private static final char[] MONEY_BAG = Character.toChars(0x1F4B0);
     private static final char[] SMILE_WITH_GLASSES = Character.toChars(0x1F60E);
+    private static final char[] BIRTHDAY_CAKE = Character.toChars(0x1F382);
+    private static final char[] NO_RICH = Character.toChars(0x1F4C9);
     private static final String GIVE_ONE_DOLLAR = "I'll give you one dollar " + MONEY_BAG[0] + MONEY_BAG[1];
     private static final String YES_IM_CHRISTIAN =
             "Yes, I'm Christian. " + SMILE_WITH_GLASSES[0] + SMILE_WITH_GLASSES[1];
@@ -31,8 +33,7 @@ public class OneDollarBotController {
                     + MONEY_BAG[0] + MONEY_BAG[1];
     private static final String YES_IM_QUITE_RICH =
             "Yes, I'm quite rich. " + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0] + MONEY_BAG[1];
-    private static final String NO_IM_NOT_RICH =
-            "No, I'm not rich. " + MONEY_BAG[0] + MONEY_BAG[1] + " " + MONEY_BAG[0] + MONEY_BAG[1];
+    private static final String NO_IM_NOT_RICH = "No, I'm not rich. " + NO_RICH[0] + NO_RICH[1];
     private static final String NO = "No";
     @Autowired
     private OneDollarDatabaseService oneDollarDatabaseService;
@@ -112,7 +113,8 @@ public class OneDollarBotController {
             sendMessage.setText("We have already talked, sir. Have a nice Birthday!");
         }
         else if (YES_IM_CHRISTIAN.equals(message)) {
-            sendMessage.setText("Happy Birthday to you, sir. Are you rich?");
+            sendMessage
+                    .setText("Happy Birthday to you, sir. " + BIRTHDAY_CAKE[0] + BIRTHDAY_CAKE[1] + " Are you rich?");
             sendMessage.setReplayMarkup(areYouRich);
         }
         else if (YES_IM_VERY_RICH.equals(message)) {
