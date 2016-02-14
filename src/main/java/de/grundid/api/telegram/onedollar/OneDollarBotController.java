@@ -93,7 +93,7 @@ public class OneDollarBotController {
                             return ResponseEntity.ok(sendMessage);
                         }
                         else {
-                            return ResponseEntity.ok().build();
+                            return ResponseEntity.noContent().build();
                         }
                     }
                     else {
