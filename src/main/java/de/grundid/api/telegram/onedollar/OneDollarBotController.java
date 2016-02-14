@@ -64,6 +64,7 @@ public class OneDollarBotController {
                     else if ("forget".equals(command)) {
                         knownNoChristianChats.remove(sendMessage.getChatId());
                         knownChristianChats.remove(sendMessage.getChatId());
+                        imageUpdateService.sendPhoto("look_right_here.jpg", "Done", sendMessage.getChatId());
                     }
                     else {
                         sendMessage.setText("Try /give");
@@ -107,14 +108,12 @@ public class OneDollarBotController {
     }
 
     private void handleBirthday(SendMessage sendMessage, String message) throws IOException {
-        if (YES_IM_CHRISTIAN.equals(message)) {
-            if (knownChristianChats.contains(sendMessage.getChatId())) {
-                sendMessage.setText("We have already talked, sir. Have a nice Birthday!");
-            }
-            else {
-                sendMessage.setText("Happy Birthday to you, sir. Are you rich?");
-                sendMessage.setReplayMarkup(areYouRich);
-            }
+        if (knownChristianChats.contains(sendMessage.getChatId())) {
+            sendMessage.setText("We have already talked, sir. Have a nice Birthday!");
+        }
+        else if (YES_IM_CHRISTIAN.equals(message)) {
+            sendMessage.setText("Happy Birthday to you, sir. Are you rich?");
+            sendMessage.setReplayMarkup(areYouRich);
         }
         else if (YES_IM_VERY_RICH.equals(message)) {
             sendMessage.setText("[Give five dollar with PayPal](http://bit.ly/OneDollarBot)");
