@@ -87,6 +87,10 @@ public class WeatherUpdateService {
                         ctrl.put(entry.getKey(), true);
                         stringBuilder.append("Letzter Wert von " + entry.getValue() + " ist " + (diff / 1000 / 60) + " Minuten her\n");
                     }
+                } else{
+                    if(ctrl.get(entry.getKey())==true){
+                        ctrl.put(entry.getKey(), false);
+                    }
                 }
             }
         }
