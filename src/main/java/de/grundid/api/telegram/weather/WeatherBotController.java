@@ -49,8 +49,13 @@ public class WeatherBotController {
                 if ("start".equals(command)) {
                     sendMessage.setText("start service.");
                 }
-                if ("register".equals(command)) {
+                if ("start".equals(command)) {
                     databaseService.addChatId(message.getChatId());
+                    sendMessage.setText("Ok, habe mir diesen Chat gemerkt.");
+                }
+                else if ("stop".equals(command)) {
+                    databaseService.removeChatId(message.getChatId());
+                    sendMessage.setText("Alles klar. Keine weiteren Updates.");
                 }
                 else {
                     sendMessage.setText("unknown command");
