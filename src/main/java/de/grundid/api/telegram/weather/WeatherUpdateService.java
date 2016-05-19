@@ -68,14 +68,14 @@ public class WeatherUpdateService {
     public String getStatus() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, String> entry : sensors.entrySet()) {
-            log.info("http://api.grundid.de/sensor?sensorName=" + entry.getKey() + "&size=1");
+            log.info("loading http://api.grundid.de/sensor?sensorName=" + entry.getKey() + "&size=1");
             PagedResponse pagedResponse = restTemplate
                     .getForObject("http://api.grundid.de/sensor?sensorName=" + entry.getKey() + "&size=1",
                             PagedResponse.class);
             if (pagedResponse != null && pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
                 long diff = (System.currentTimeMillis() - pagedResponse.getContent().get(0).getTimestamp());
                 long diffInMins = diff / (1000 * 60);
-                log.info("Wert " + entry.getKey() + " ist " + diffInMins + " minuten alt");
+                log.info("Wert " + entry.getKey() + " ist " + diffInMins + " Minuten alt");
                 if (diffInMins > 15) {
                     Boolean currentValueAvailable = currentValueMap.get(entry.getKey());
                     if (currentValueAvailable == null || currentValueAvailable) {
