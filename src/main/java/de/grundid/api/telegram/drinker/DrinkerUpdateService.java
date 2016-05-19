@@ -1,5 +1,6 @@
 package de.grundid.api.telegram.drinker;
 
+import de.grundid.api.utils.db.AbstractDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class DrinkerUpdateService {
     private NumberFormat volumeFormat = new DecimalFormat("0.0#'l'");
     private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
     @Autowired
-    private DrinkerDatabaseService drinkerDatabaseService;
+    private AbstractDatabaseService drinkerDatabaseService;
     @Value("${telegram.drinkerBot.apiKey}")
     private String apiKey;
     private RestTemplate restTemplate = new RestTemplate();

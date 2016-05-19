@@ -1,4 +1,4 @@
-package de.grundid.api.telegram.drinker;
+package de.grundid.api.utils.db;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
