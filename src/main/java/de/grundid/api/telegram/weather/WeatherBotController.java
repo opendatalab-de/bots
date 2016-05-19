@@ -41,7 +41,6 @@ public class WeatherBotController {
         Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
-        weatherUpdateService.setChatId(message.getChatId());
         if (StringUtils.hasText(message.getText())) {
             try {
                 CommandParser commandParser = new CommandParser(message.getText());
