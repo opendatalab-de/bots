@@ -27,11 +27,7 @@ import java.util.Locale;
 @Service
 public class WeatherUpdateService {
 
-    private NumberFormat priceFormat = DecimalFormat.getCurrencyInstance(Locale.GERMANY);
-    private NumberFormat volumeFormat = new DecimalFormat("0.0#'l'");
-    private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
-
-    @Value("${telegram.drinkerBot.apiKey}")
+    @Value("${telegram.cowoHnWeatherBot.apiKey}")
     private String apiKey;
     private RestTemplate restTemplate = new RestTemplate();
     private long lastCheck = System.currentTimeMillis();
@@ -49,20 +45,20 @@ public class WeatherUpdateService {
                         lastCheck);
         if (pagedResponse != null && pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
 
-            long last = System.currentTimeMillis() - pagedResponse.getContent().get(0).getTimestamp();
-            if(last > (5 * 60 * 1000)){
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.enableMarkdown(true);
-                sendMessage.setChatId(chatId);
-                String messageContent = "Der letzte Wert ist mehr als 5 Minuten her";
-                sendMessage.setText(messageContent);
-                try {
-                    ResponseEntity<String> responseEntity = restTemplate
-                            .postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage, String.class);
-                }
-                catch (RestClientException e) {
-                    throw new IllegalStateException(e);
-                }
+            long diff = System.currentTimeMillis() - pagedResponse.getContent().get(0).getTimestamp();
+
+
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.enableMarkdown(true);
+            sendMessage.setChatId(chatId);
+            String messageContent = "Der letzte Wert ist " + diff + " Minuten her";
+            sendMessage.setText(messageContent);
+            try {
+                ResponseEntity<String> responseEntity = restTemplate
+                        .postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage, String.class);
+            }
+            catch (RestClientException e) {
+                 throw new IllegalStateException(e);
             }
 
         }
