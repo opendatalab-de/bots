@@ -73,7 +73,7 @@ public class WeatherUpdateService {
                     .getForObject("http://api.grundid.de/sensor?sensorName=" + entry.getKey() + "&size=1",
                             PagedResponse.class);
             if (pagedResponse != null && pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
-                long diff = (System.currentTimeMillis() - pagedResponse.getContent().get(0).getTimestamp());
+                long diff = (System.currentTimeMillis() - pagedResponse.getContent().get(0).getDate());
                 long diffInMins = diff / (1000 * 60);
                 log.info("Wert " + entry.getKey() + " ist " + diffInMins + " Minuten alt");
                 if (diffInMins > 15) {

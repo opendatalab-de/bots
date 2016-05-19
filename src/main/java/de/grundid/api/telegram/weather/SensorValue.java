@@ -4,31 +4,32 @@ package de.grundid.api.telegram.weather;
  * Created by lukas on 19.05.16.
  */
 public class SensorValue {
-    private String name;
-    private float value;
-    private long timestamp;
 
-    public String getName() {
-        return name;
+    private String sensorName;
+    private double value;
+    private long date;
+
+    public String getSensorName() {
+        return sensorName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSensorName(String sensorName) {
+        this.sensorName = sensorName;
     }
 
-    public float getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public long getDate() {
+        return date;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setDate(long date) {
+        this.date = date;
     }
 }
