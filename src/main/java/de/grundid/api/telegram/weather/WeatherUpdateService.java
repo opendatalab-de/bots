@@ -14,13 +14,14 @@ import org.telegram.api.methods.SendMessage;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Service
 public class WeatherUpdateService {
 
     private static Logger log = LoggerFactory.getLogger(WeatherUpdateService.class);
-    private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
+    private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.GERMANY);
     @Autowired
     private WeatherDatabaseService databaseService;
     @Value("${telegram.cowoHnWeatherBot.apiKey}")
