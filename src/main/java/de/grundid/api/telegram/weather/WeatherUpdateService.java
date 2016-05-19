@@ -1,5 +1,7 @@
 package de.grundid.api.telegram.weather;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.Map;
 @Service
 public class WeatherUpdateService {
 
+    private static Logger log = LoggerFactory.getLogger(WeatherUpdateService.class);
     @Autowired
     private WeatherDatabaseService databaseService;
     @Value("${telegram.cowoHnWeatherBot.apiKey}")
@@ -26,7 +29,7 @@ public class WeatherUpdateService {
     private RestTemplate restTemplate = new RestTemplate();
     private long lastCheck = System.currentTimeMillis();
     private Map<String, String> sensors = new HashMap<>();
-    private Map<String, Boolean> ctrl = new HashMap<>();
+    private Map<String, Boolean> currentValueMap = new HashMap<>();
 
     public WeatherUpdateService() {
         sensors.put("cowo.outside.temperature", "Außentemperatur");
@@ -34,11 +37,6 @@ public class WeatherUpdateService {
         sensors.put("cowo.inside2.temperature", "Innentemperatur Nord");
         sensors.put("cowo.inside2.humidity", "Luftfeuchtigkeit Innen");
         sensors.put("cowo.outside.humidity", "Luftfeuchtigkeit Außen");
-        ctrl.put("cowo.outside.temperature", false);
-        ctrl.put("cowo.inside1.temperature", false);
-        ctrl.put("cowo.inside2.temperature", false);
-        ctrl.put("cowo.inside2.humidity", false);
-        ctrl.put("cowo.outside.humidity", false);
     }
 
     @Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 20 * 1000)
@@ -69,27 +67,28 @@ public class WeatherUpdateService {
 
     public String getStatus() {
         StringBuilder stringBuilder = new StringBuilder();
-        boolean valTooOld = false;
         for (Map.Entry<String, String> entry : sensors.entrySet()) {
-            de.grundid.api.telegram.weather.PagedResponse pagedResponse = restTemplate
+            log.info("http://api.grundid.de/sensor?sensorName=" + entry.getKey() + "&size=1");
+            PagedResponse pagedResponse = restTemplate
                     .getForObject("http://api.grundid.de/sensor?sensorName=" + entry.getKey() + "&size=1",
-                            de.grundid.api.telegram.weather.PagedResponse.class, lastCheck);
+                            PagedResponse.class);
             if (pagedResponse != null && pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
                 long diff = (System.currentTimeMillis() - pagedResponse.getContent().get(0).getTimestamp());
-                if (diff > (15 * 60 * 1000)) {
-                    if (ctrl.get(entry.getKey()) == false) {
-                        valTooOld = true;
-                        ctrl.put(entry.getKey(), true);
-                        stringBuilder.append("Letzter Wert von " + entry.getValue() + " ist " + (diff / 1000 / 60)
-                                + " Minuten her\n");
+                long diffInMins = diff / (1000 * 60);
+                log.info("Wert " + entry.getKey() + " ist " + diffInMins + " minuten alt");
+                if (diffInMins > 15) {
+                    Boolean currentValueAvailable = currentValueMap.get(entry.getKey());
+                    if (currentValueAvailable == null || currentValueAvailable) {
+                        stringBuilder.append("Letzter Wert von ").append(entry.getValue()).append(" ist ")
+                                .append(diffInMins).append(" Minuten her\n");
                     }
-                } else{
-                    if(ctrl.get(entry.getKey())==true){
-                        ctrl.put(entry.getKey(), false);
-                    }
+                    currentValueMap.put(entry.getKey(), false);
+                }
+                else {
+                    currentValueMap.put(entry.getKey(), true);
                 }
             }
         }
-        return (valTooOld == true) ? stringBuilder.toString() : null;
+        return stringBuilder.length() > 0 ? stringBuilder.toString() : null;
     }
 }
