@@ -6,16 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SendMessage;
 
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class WeatherUpdateService {
@@ -48,6 +44,7 @@ public class WeatherUpdateService {
     public void forceUpdateSince(long lastCheck) {
         String messageContent = getStatus();
         if (messageContent != null) {
+            Set<Integer> chatIdsToRemove = new HashSet<>();
             for (Integer chatId : databaseService.getChatIds()) {
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.enableMarkdown(true);
@@ -57,9 +54,12 @@ public class WeatherUpdateService {
                     restTemplate.postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage,
                             String.class);
                 }
-                catch (RestClientException e) {
-                    throw new IllegalStateException(e);
+                catch (Exception e) {
+                    chatIdsToRemove.add(chatId);
                 }
+            }
+            for (Integer chatId : chatIdsToRemove) {
+                databaseService.removeChatId(chatId);
             }
         }
     }
