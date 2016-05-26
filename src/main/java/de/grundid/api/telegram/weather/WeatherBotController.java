@@ -46,9 +46,6 @@ public class WeatherBotController {
                 CommandParser commandParser = new CommandParser(message.getText());
                 String command = commandParser.getCommand();
                 if ("start".equals(command)) {
-                    sendMessage.setText("start service.");
-                }
-                if ("start".equals(command)) {
                     databaseService.addChatId(message.getChatId());
                     sendMessage.setText("Ok, habe mir diesen Chat gemerkt.");
                 }
@@ -56,16 +53,11 @@ public class WeatherBotController {
                     databaseService.removeChatId(message.getChatId());
                     sendMessage.setText("Alles klar. Keine weiteren Updates.");
                 }
-                else {
-                    sendMessage.setText("unknown command");
-                }
             }
             catch (ParseException e) {
-                sendMessage.setText("unknown command");
             }
         }
         else {
-            sendMessage.setText("unknown command.");
         }
         return ResponseEntity.ok().body(sendMessage);
     }
