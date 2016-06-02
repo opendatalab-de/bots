@@ -62,7 +62,12 @@ public class WeatherBotController {
         }
         else {
         }
-        return ResponseEntity.ok().body(sendMessage);
+        if (sendMessage.getText() != null) {
+            return ResponseEntity.ok().body(sendMessage);
+        }
+        else {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     private String getUserName(Message message) {
