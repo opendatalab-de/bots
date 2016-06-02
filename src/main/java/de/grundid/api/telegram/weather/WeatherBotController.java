@@ -53,6 +53,9 @@ public class WeatherBotController {
                     databaseService.removeChatId(message.getChatId());
                     sendMessage.setText("Alles klar. Keine weiteren Updates.");
                 }
+                else if ("status".equals(command)) {
+                    weatherUpdateService.sendCurrentValues();
+                }
             }
             catch (ParseException e) {
             }
