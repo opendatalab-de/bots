@@ -11,13 +11,13 @@ import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SendMessage;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
 public class WeatherUpdateService {
 
     private static Logger log = LoggerFactory.getLogger(WeatherUpdateService.class);
-    private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.GERMANY);
     @Autowired
     private WeatherDatabaseService databaseService;
     @Value("${telegram.cowoHnWeatherBot.apiKey}")
@@ -71,13 +71,17 @@ public class WeatherUpdateService {
 
     public void sendCurrentValues() {
         StringBuilder stringBuilder = new StringBuilder();
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.GERMANY);
+        DecimalFormat decimalFormat = new DecimalFormat("#0.0");
         for (Map.Entry<String, String> entry : sensors.entrySet()) {
             String key = entry.getKey();
-            SensorValue sensorValue = lastSensorValues.get(key);
-            if (sensorValue != null) {
-                stringBuilder.append("Aktueller Wert von ").append(entry.getValue()).append(" ist ")
-                        .append(sensorValue.getValue()).append(" (vom ")
-                        .append(dateFormat.format(new Date(sensorValue.getDate()))).append(")\n");
+            if (key.contains("temperature")) {
+                SensorValue sensorValue = lastSensorValues.get(key);
+                if (sensorValue != null) {
+                    stringBuilder.append("Aktueller Wert von ").append(entry.getValue()).append(" ist ")
+                            .append(decimalFormat.format(sensorValue.getValue())).append("°C (vom ")
+                            .append(dateFormat.format(new Date(sensorValue.getDate()))).append(")\n");
+                }
             }
         }
         if (stringBuilder.length() == 0) {
@@ -88,6 +92,7 @@ public class WeatherUpdateService {
 
     public String getStatus() {
         StringBuilder stringBuilder = new StringBuilder();
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.GERMANY);
         for (Map.Entry<String, String> entry : sensors.entrySet()) {
             log.info("loading http://api.grundid.de/sensor?sensorName=" + entry.getKey() + "&size=1");
             PagedResponse pagedResponse = restTemplate
