@@ -54,7 +54,7 @@ public class WeatherBotController {
                     sendMessage.setText("Alles klar. Keine weiteren Updates.");
                 }
                 else if ("status".equals(command)) {
-                    weatherUpdateService.sendCurrentValues();
+                    sendMessage.setText(weatherUpdateService.getCurrentValues());
                 }
             }
             catch (ParseException e) {

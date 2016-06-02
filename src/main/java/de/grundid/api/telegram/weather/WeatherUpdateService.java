@@ -69,7 +69,7 @@ public class WeatherUpdateService {
         }
     }
 
-    public void sendCurrentValues() {
+    public String getCurrentValues() {
         StringBuilder stringBuilder = new StringBuilder();
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.GERMANY);
         DecimalFormat decimalFormat = new DecimalFormat("#0.0");
@@ -87,7 +87,7 @@ public class WeatherUpdateService {
         if (stringBuilder.length() == 0) {
             stringBuilder.append("Keine aktuellen Werte vorhanden.");
         }
-        sendMessageToRegisteredUsers(stringBuilder.toString());
+        return stringBuilder.toString();
     }
 
     public String getStatus() {
