@@ -4,14 +4,13 @@ import de.grundid.api.telegram.CommandParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.telegram.api.methods.SendMessage;
 import org.telegram.api.objects.Message;
 import org.telegram.api.objects.Update;
 
 import java.text.ParseException;
+
 
 @RestController
 public class FarmbotController {
@@ -19,6 +18,7 @@ public class FarmbotController {
     @Autowired
     private FarmbotDatabaseService databaseService;
 
+    @RequestMapping(value = "/bot/farmbotHn", method = RequestMethod.POST)
     public ResponseEntity<?> post(@RequestBody Update update){
         Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
