@@ -4,6 +4,7 @@ package de.grundid.api.telegram.farmbothn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SendMessage;
@@ -11,6 +12,7 @@ import org.telegram.api.methods.SendMessage;
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
 public class FarmbotUpdateService {
 
     @Autowired
