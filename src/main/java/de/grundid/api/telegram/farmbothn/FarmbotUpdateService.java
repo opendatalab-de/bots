@@ -21,6 +21,8 @@ public class FarmbotUpdateService {
     @Value("${telegram.farmbotHn.apiKey}")
     private String apiKey;
 
+    private Double lastPercent;
+
     private RestTemplate restTemplate = new RestTemplate();
 
     @Scheduled(fixedDelay = 6 * 60 * 1000)
@@ -29,7 +31,11 @@ public class FarmbotUpdateService {
         for (Integer chatID : databaseService.getChatIds()) {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatID);
-            sendMessage.setText("TEST Update");
+            if(lastPercent != null){
+                sendMessage.setText(lastPercent.toString());
+            } else {
+                sendMessage.setText("Noch keine Prozentwerte");
+            }
 
             try {
                 restTemplate.postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage, String.class);
@@ -44,5 +50,9 @@ public class FarmbotUpdateService {
         }
 
 
+    }
+
+    public void setLastPercent(double lastPercent) {
+        this.lastPercent = lastPercent;
     }
 }
