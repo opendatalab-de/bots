@@ -63,13 +63,13 @@ public class FarmbotController {
     @RequestMapping(value = "/bot/farmbotHn/post", method = RequestMethod.POST)
     public void dataPosted(@RequestBody FarmbotValue value){
 
-        updateService.setLastPercent(value.getPercent());
+        updateService.setLastPercent(Double.parseDouble(value.getPercent()));
 
         Set<Integer> chatIdsToRemove = new HashSet<>();
         for (Integer chatID : databaseService.getChatIds()) {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatID);
-            sendMessage.setText(Double.toString(value.getPercent()));
+            sendMessage.setText(value.getPercent());
 
             try {
                 restTemplate.postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage, String.class);

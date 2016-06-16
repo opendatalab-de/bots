@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FarmbotValue {
-    private double percent;
+    private String percent;
 
-    public double getPercent() {
+    public String getPercent() {
         return percent;
     }
 
-    public void setPercent(double percent) {
+    public void setPercent(String percent) {
         this.percent = percent;
     }
 }
