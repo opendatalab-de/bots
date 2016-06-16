@@ -4,6 +4,7 @@ import de.grundid.api.telegram.CommandParser;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,7 @@ public class FarmbotController {
 
     //Sends Message when he gets a message from the pi
     @RequestMapping(value = "/bot/farmbotHn/post", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
     public void dataPosted(@RequestBody FarmbotValue value){
 
         updateService.setLastPercent(Double.parseDouble(value.getPercent()));
