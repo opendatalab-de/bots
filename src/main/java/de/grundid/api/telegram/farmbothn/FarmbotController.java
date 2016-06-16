@@ -61,7 +61,7 @@ public class FarmbotController {
 
     //Sends Message when he gets a message from the pi
     @RequestMapping(value = "/bot/farmbotHn/post", method = RequestMethod.POST)
-    public void dataPosted(@RequestBody @RequestParam("json")  FarmbotValue value){
+    public void dataPosted(@RequestBody FarmbotValue value){
 
         updateService.setLastPercent(value.getPercent());
 
