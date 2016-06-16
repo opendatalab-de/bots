@@ -63,7 +63,7 @@ public class FarmbotController {
     //Sends Message when he gets a message from the pi
     @RequestMapping(value = "/bot/farmbotHn/post", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void dataPosted(@RequestBody FarmbotValue value){
+    public @ResponseBody String dataPosted(@RequestBody FarmbotValue value){
 
         updateService.setLastPercent(Double.parseDouble(value.getPercent()));
 
@@ -84,5 +84,7 @@ public class FarmbotController {
         for (Integer chatID : chatIdsToRemove) {
             databaseService.removeChatId(chatID);
         }
+
+        return "worked";
     }
 }
