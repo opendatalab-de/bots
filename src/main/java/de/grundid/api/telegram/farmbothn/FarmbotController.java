@@ -32,6 +32,7 @@ public class FarmbotController {
     @Autowired
     private FarmbotUpdateService updateService;
 
+    //Bearbeitet die User-Anfragen
     @RequestMapping(value = "/bot/farmbotHn", method = RequestMethod.POST)
     public ResponseEntity<?> post(@RequestBody Update update){
         Message message = update.getMessage();
@@ -47,6 +48,12 @@ public class FarmbotController {
                 } else if("stop".equals(command)){
                     databaseService.removeChatId(message.getChatId());
                     sendMessage.setText("Ok. Keine weiteren Nachrichten");
+                } else if("send_update".equals(command)){
+                    Double lastPercent = updateService.getLastPercent();
+                    if(lastPercent != null)
+                        sendMessage.setText("Letzer Feuchtigkeitswert: " + lastPercent);
+                    else
+                        sendMessage.setText("Noch keine Feuchtigkeitswerte");
                 }
             } catch (ParseException e) {
                 e.printStackTrace();

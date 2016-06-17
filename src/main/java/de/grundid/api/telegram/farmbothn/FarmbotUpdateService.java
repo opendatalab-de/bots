@@ -55,4 +55,6 @@ public class FarmbotUpdateService {
     public void setLastPercent(double lastPercent) {
         this.lastPercent = lastPercent;
     }
+
+    public Double getLastPercent(){ return lastPercent; }
 }
