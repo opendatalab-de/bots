@@ -74,6 +74,6 @@ public class FarmbotUpdateService {
     }
 
     public void setLocalDateTime(String time) {
-        localDateTime = (LocalDateTime) dateTimeFormatter.parse(time);
+        localDateTime = LocalDateTime.parse(time, dateTimeFormatter);
     }
 }
