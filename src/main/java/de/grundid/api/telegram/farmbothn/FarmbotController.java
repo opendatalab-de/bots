@@ -15,9 +15,6 @@ import org.telegram.api.objects.Message;
 import org.telegram.api.objects.Update;
 
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Set;
-
 
 @RestController
 public class FarmbotController {
@@ -67,31 +64,11 @@ public class FarmbotController {
     }
 
 
-    //Sends Message when he gets a message from the pi
+    //Saves the value when he gets a message
     @RequestMapping(value = "/bot/farmbotHnPost", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public @ResponseBody String dataPosted(@RequestBody FarmbotValue value){
-
+    public void dataPosted(@RequestBody FarmbotValue value){
         updateService.setLastPercent(Double.parseDouble(value.getPercent()));
-
-        Set<Integer> chatIdsToRemove = new HashSet<>();
-        for (Integer chatID : databaseService.getChatIds()) {
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(chatID);
-            sendMessage.setText(value.getPercent());
-
-            try {
-                restTemplate.postForEntity(Constants.BASEURL + apiKey + "/" + SendMessage.PATH, sendMessage, String.class);
-            } catch (Exception e) {
-                chatIdsToRemove.add(chatID);
-            }
-
-        }
-
-        for (Integer chatID : chatIdsToRemove) {
-            databaseService.removeChatId(chatID);
-        }
-
-        return "worked";
+        updateService.setLocalDateTime(value.getTime());
     }
 }

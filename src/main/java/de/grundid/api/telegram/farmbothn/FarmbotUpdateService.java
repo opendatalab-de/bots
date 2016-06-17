@@ -9,6 +9,8 @@ import org.springframework.web.client.RestTemplate;
 import org.telegram.api.methods.Constants;
 import org.telegram.api.methods.SendMessage;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,17 +24,24 @@ public class FarmbotUpdateService {
     private String apiKey;
 
     private Double lastPercent;
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
+    private LocalDateTime localDateTime;
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedDelay = 6 * 60 * 1000)
+    @Scheduled(fixedDelay = 60 * 1000)
     public void sendUpdateMessage() {
         Set<Integer> chatIdsToRemove = new HashSet<>();
         for (Integer chatID : databaseService.getChatIds()) {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatID);
-            if(lastPercent != null){
-                sendMessage.setText(lastPercent.toString());
+            if (lastPercent != null) {
+                long diffInSeconds = java.time.Duration.between(localDateTime, LocalDateTime.now()).getSeconds();
+                if (LocalDateTime.now().isAfter(localDateTime) && diffInSeconds < 600) {
+                    sendMessage.setText("Aktuelle Feuchtigkeit:" + lastPercent.toString());
+                } else {
+                    sendMessage.setText("Achtung! Letzte Feuchtigkeitswerte vor mehr als 10 Minuten, Verbindung zum Pi gescheitert");
+                }
             } else {
                 sendMessage.setText("Noch keine Prozentwerte");
             }
@@ -56,5 +65,15 @@ public class FarmbotUpdateService {
         this.lastPercent = lastPercent;
     }
 
-    public Double getLastPercent(){ return lastPercent; }
+    public Double getLastPercent() {
+        return lastPercent;
+    }
+
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(String time) {
+        localDateTime = (LocalDateTime) dateTimeFormatter.parse(time);
+    }
 }
