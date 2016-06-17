@@ -26,6 +26,7 @@ public class FarmbotController {
 
     @Autowired
     private FarmbotDatabaseService databaseService;
+
     @Autowired
     private FarmbotUpdateService updateService;
 

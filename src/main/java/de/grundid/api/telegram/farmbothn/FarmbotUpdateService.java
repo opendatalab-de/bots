@@ -25,7 +25,7 @@ public class FarmbotUpdateService {
 
     private Double lastPercent;
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
-    private LocalDateTime localDateTime;
+    private LocalDateTime localDateTime = getLocalDateTime();
 
     private RestTemplate restTemplate = new RestTemplate();
 
