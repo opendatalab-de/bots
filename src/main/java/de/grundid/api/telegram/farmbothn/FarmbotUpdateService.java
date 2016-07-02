@@ -37,15 +37,15 @@ public class FarmbotUpdateService {
         for (Integer chatID : databaseService.getChatIds()) {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatID);
-            if (lastPercent != null) {
+            if (lastPercent != null && lastHumidity != null && lastTemperature != null) {
                 long diffInSeconds = java.time.Duration.between(localDateTime, LocalDateTime.now()).getSeconds();
                 if (LocalDateTime.now().isAfter(localDateTime) && diffInSeconds < 600) {
-                    sendMessage.setText("Aktuelle Feuchtigkeit:" + lastPercent.toString());
+                    sendMessage.setText("Aktuelle Feuchtigkeit:" + lastPercent.toString() + "\nAktuelle Luftfeuchtigkeit:" + lastHumidity.toString() + "\nAktuelle Temperatur:" + lastTemperature.toString());
                 } else {
-                    sendMessage.setText("Achtung! Letzte Feuchtigkeitswerte vor mehr als 10 Minuten, Verbindung zum Pi gescheitert");
+                    sendMessage.setText("Achtung! Letzte Werte vor mehr als 10 Minuten, Verbindung zum Pi gescheitert");
                 }
             } else {
-                sendMessage.setText("Noch keine Prozentwerte");
+                sendMessage.setText("Noch keine Werte vom Sensor");
             }
 
             try {
