@@ -4,21 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FarmbotValue {
-    private String percent, time;
+    private String percent, time, temperature, humidity;
 
     public String getPercent() {
         return percent;
     }
 
-    public void setPercent(String percent) {
-        this.percent = percent;
-    }
 
     public String getTime() {
         return time;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public String getTemperature() {
+        return temperature;
+    }
+
+    public String getHumidity() {
+        return humidity;
     }
 }

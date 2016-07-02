@@ -14,6 +14,7 @@ import org.telegram.api.methods.SendMessage;
 import org.telegram.api.objects.Message;
 import org.telegram.api.objects.Update;
 
+import java.awt.geom.Arc2D;
 import java.text.ParseException;
 
 @RestController
@@ -71,5 +72,7 @@ public class FarmbotController {
     public void dataPosted(@RequestBody FarmbotValue value){
         updateService.setLastPercent(Double.parseDouble(value.getPercent()));
         updateService.setLocalDateTime(value.getTime());
+        updateService.setLastHumidity(Double.parseDouble(value.getHumidity()));
+        updateService.setLastTemperature(Double.parseDouble(value.getTemperature()));
     }
 }

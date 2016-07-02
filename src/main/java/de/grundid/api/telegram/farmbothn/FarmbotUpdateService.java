@@ -24,12 +24,14 @@ public class FarmbotUpdateService {
     private String apiKey;
 
     private Double lastPercent;
+    private Double lastTemperature;
+    private Double lastHumidity;
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
     private LocalDateTime localDateTime = getLocalDateTime();
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedDelay = 60 * 1000)
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void sendUpdateMessage() {
         Set<Integer> chatIdsToRemove = new HashSet<>();
         for (Integer chatID : databaseService.getChatIds()) {
@@ -75,5 +77,21 @@ public class FarmbotUpdateService {
 
     public void setLocalDateTime(String time) {
         localDateTime = LocalDateTime.parse(time, dateTimeFormatter);
+    }
+
+    public Double getLastTemperature() {
+        return lastTemperature;
+    }
+
+    public void setLastTemperature(Double lastTemperature) {
+        this.lastTemperature = lastTemperature;
+    }
+
+    public Double getLastHumidity() {
+        return lastHumidity;
+    }
+
+    public void setLastHumidity(Double lastHumidity) {
+        this.lastHumidity = lastHumidity;
     }
 }
