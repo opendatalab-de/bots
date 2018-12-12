@@ -4,7 +4,6 @@ import de.grundid.api.telegram.CommandParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
-@Controller
 public class OneDollarBotController {
 
     private static final char[] MONEY_BAG = Character.toChars(0x1F4B0);
