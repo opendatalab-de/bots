@@ -17,6 +17,7 @@ import java.util.*;
 @Service
 public class WeatherUpdateService {
 
+    private static final int MIN_MINUTES_FOR_WARNING = 25;
     private static Logger log = LoggerFactory.getLogger(WeatherUpdateService.class);
     @Autowired
     private WeatherDatabaseService databaseService;
@@ -107,7 +108,7 @@ public class WeatherUpdateService {
                 log.info("Wert " + entry.getKey() + " ist " + diffInMins + " Minuten alt");
                 Boolean valueAvailable = currentValueMap.get(entry.getKey());
                 boolean currentValueAvailable = valueAvailable == null || valueAvailable;
-                if (diffInMins > 15) {
+                if (diffInMins > MIN_MINUTES_FOR_WARNING) {
                     if (currentValueAvailable) {
                         stringBuilder.append("Letzter Wert von ").append(entry.getValue()).append(" ist ")
                                 .append(diffInMins).append(" Minuten her (vom ")
